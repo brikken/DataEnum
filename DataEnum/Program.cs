@@ -16,23 +16,28 @@ namespace DataEnum
             var stg = new TemplateGroupFile(new FileInfo(@"table-def.stg").FullName);
             foreach (var td in tds)
             {
-                Console.WriteLine($"Table {td.name}");
-                foreach (
-                    (string name, string fullname)
-                    in td.members
-                        .SelectMany(m => m.GetMembersPrimitive()
-                        .Select(mp => (name: m.name, fullname: mp.fullname))))
-                {
-                    Console.WriteLine($"{name}: {fullname}");
-                }
-                Console.WriteLine("==========");
+                //Console.WriteLine($"Table {td.name}");
+                //foreach (
+                //    (string name, string fullname)
+                //    in td.members
+                //        .SelectMany(m => m.GetMembersPrimitive()
+                //        .Select(mp => (name: m.name, fullname: mp.fullname))))
+                //{
+                //    Console.WriteLine($"{name}: {fullname}");
+                //}
+                //Console.WriteLine("==========");
                 var ts = stg.GetInstanceOf("tablescript");
                 ts.Add("td", td);
-                Console.WriteLine(ts.Render());
+                File.WriteAllText("table-script.sql", ts.Render());
+                Console.WriteLine(File.ReadAllText("table-script.sql"));
+
+                //var jSer = JsonSerializer.CreateDefault();
+                //using (StreamWriter writer = new StreamWriter("table-def-output.json"))
+                //{
+                //    jSer.Serialize(writer, td);
+                //}
+                //Console.WriteLine(File.ReadAllText("table-def-output.json"));
             }
-            Stack<string> test = new Stack<string>();
-            test.Push("a"); test.Push("b"); test.Push("c");
-            Console.WriteLine(string.Join("", test.Reverse()));
             while (Console.ReadKey().Key != ConsoleKey.Spacebar);
         }
     }

@@ -1,20 +1,50 @@
 ﻿tablescript(td) ::= <<
-<td.memberDefinitions:{m|<m.FullNames:{fn|<m.name>: <fn><\n>}>}>
-<td.members:{m|CHK_<m.name>:<\n><memberconstraint(m)><\n>}>
+CREATE TABLE <tablename()> (
+  <["ID INT NOT NULL PRIMARY KEY",td.members:memberdef()];separator=",\n">
+)
+<td.members:checkdef();separator="\n">
+>>
+
+tablename() ::= "[dbo].[<td.name>]"
+
+memberdef(mem) ::= <<
+<if(mem.signal)><\\>
+[<mem.signalFullname>] INT NULL,
+<endif><\\>
+<if(mem.dataType.Primitive)><\\>
+[<mem.fullname>] <mem.dataType.name> NULL<\\>
+<else><\\>
+<mem.alternatives:{alt|<alt.fields:memberdef();separator=",\n">};separator=",\n"><\\>
+<endif>
+>>
+
+checkdef(mem) ::= <<
+ALTER TABLE <tablename()> WITH CHECK ADD CONSTRAINT [<td.name>_CHK_enum_<mem.fullname>] CHECK (
+  <memberconstraint(mem)>
+)
 >>
 
 memberconstraint(mem) ::= <<
-<if(mem.dataType.Primitive)><mem.fullname> IS NOT NULL<else>(
+<if(mem.dataType.Primitive)><\\>
+[<mem.fullname>] IS NOT NULL<\\>
+<else><\\>
+(
   <mem.alternatives:alternativecheck();separator="\nOR\n">
-)<endif>
+)<\\>
+<endif>
 >>
 
 alternativecheck(alt) ::= <<
 (
-  <if(mem.signal)><mem.signalFullname> = <alt.index><else>1=1<endif> AND 
+<if(mem.signal)>  [<mem.signalFullname>] = <alt.index> AND<endif>
   (
-    <alt.fields:memberconstraint():{mc|<mc>};separator=" AND ">
-  ) AND
-  <if(!first(alt.fieldsOther))>1=1<else>(<alt.fieldsOther:{fo|<fo.fullname> IS NULL};separator=" AND ">)<endif>
+    <alt.fields:memberconstraint():{mc|<mc>};separator=" AND\n">
+  )
+<if(first(alt.fieldsOther))>
+  AND
+  (
+    <alt.fieldsOther:{fo|[<fo.fullname>] IS NULL};separator=" AND\n">
+  )
+<endif>
 )
 >>

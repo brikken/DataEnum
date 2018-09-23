@@ -1,5 +1,5 @@
 {
-  "table-def02": {
+  "table-def02-da": {
     "settings": {
       "member-separator": "_"
     },
@@ -25,17 +25,27 @@
       "person": {
         "biological": {
           "name": "varchar(max)",
-          "age": "int"
+          "age": "int",
+          "height": "int",
+          "favoriteshape": "shape"
         },
         "legal": {
           "name": "varchar(max)",
-          "cvr": "int"
+          "cvr": "int",
+          "address": "address"
+        }
+      },
+      "address": {
+        "address": {
+          "street": "varchar(max)",
+          "street-number": "int"
         }
       }
     },
     "members": {
       "lot": "shape",
-      "owner": "person"
+      "owner": "person",
+      "tenant": "person"
     }
   }
 }
