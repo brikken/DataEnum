@@ -1,0 +1,41 @@
+{
+  "table-def02": {
+    "settings": {
+      "member-separator": "_"
+    },
+    "types": {
+      "shape": {
+        "circle": {
+          "x": "int",
+          "y": "int",
+          "radius": "int"
+        },
+        "rectangle": {
+          "x": "int",
+          "y": "int",
+          "width": "int",
+          "height": "int"
+        },
+        "triangle": {
+          "base": "int",
+          "height": "int",
+          "angle": "int"
+        }
+      },
+      "person": {
+        "biological": {
+          "name": "varchar(max)",
+          "age": "int"
+        },
+        "legal": {
+          "name": "varchar(max)",
+          "cvr": "int"
+        }
+      }
+    },
+    "members": {
+      "lot": "shape",
+      "owner": "person"
+    }
+  }
+}

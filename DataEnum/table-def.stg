@@ -1,3 +1,20 @@
-﻿table(def) ::= <<
+﻿tablescript(td) ::= <<
+<td.memberDefinitions:{m|<m.FullNames:{fn|<m.name>: <fn><\n>}>}>
+<td.members:{m|CHK_<m.name>:<\n><memberconstraint(m)><\n>}>
+>>
 
+memberconstraint(mem) ::= <<
+<if(mem.dataType.Primitive)><mem.fullname> IS NOT NULL<else>(
+  <mem.alternatives:alternativecheck();separator="\nOR\n">
+)<endif>
+>>
+
+alternativecheck(alt) ::= <<
+(
+  <if(mem.signal)><mem.signalFullname> = <alt.index><else>1=1<endif> AND 
+  (
+    <alt.fields:memberconstraint():{mc|<mc>};separator=" AND ">
+  ) AND
+  <if(!first(alt.fieldsOther))>1=1<else>(<alt.fieldsOther:{fo|<fo.fullname> IS NULL};separator=" AND ">)<endif>
+)
 >>
