@@ -5,44 +5,11 @@ using System.Linq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Antlr4.StringTemplate;
+using System.Reflection;
 
 namespace DataEnum
 {
-    class Program
-    {
-        static void Main(string[] args)
-        {
-            var tds = TableDefinition.FromFile(@"table-def02.json");
-            var stg = new TemplateGroupFile(new FileInfo(@"table-def.stg").FullName);
-            foreach (var td in tds)
-            {
-                //Console.WriteLine($"Table {td.name}");
-                //foreach (
-                //    (string name, string fullname)
-                //    in td.members
-                //        .SelectMany(m => m.GetMembersPrimitive()
-                //        .Select(mp => (name: m.name, fullname: mp.fullname))))
-                //{
-                //    Console.WriteLine($"{name}: {fullname}");
-                //}
-                //Console.WriteLine("==========");
-                var ts = stg.GetInstanceOf("tablescript");
-                ts.Add("td", td);
-                File.WriteAllText("table-script.sql", ts.Render());
-                Console.WriteLine(File.ReadAllText("table-script.sql"));
-
-                //var jSer = JsonSerializer.CreateDefault();
-                //using (StreamWriter writer = new StreamWriter("table-def-output.json"))
-                //{
-                //    jSer.Serialize(writer, td);
-                //}
-                //Console.WriteLine(File.ReadAllText("table-def-output.json"));
-            }
-            while (Console.ReadKey().Key != ConsoleKey.Spacebar);
-        }
-    }
-
-    class TableDefinition
+    public class TableDefinition
     {
         public IList<MemberDefinition> memberDefinitions = new List<MemberDefinition>();
         public IList<Member> members = new List<Member>();
@@ -394,5 +361,14 @@ namespace DataEnum
         {
             return new Context() { memberSeparator = memberSeparator };
         }
-    }
+
+        public string GetSQL()
+        {
+            var templatePath = Path.Combine(new FileInfo(Assembly.GetExecutingAssembly().Location).Directory.FullName, @"templates\table-def.stg");
+            var stg = new TemplateGroupFile(templatePath);
+            var ts = stg.GetInstanceOf("tablescript");
+            ts.Add("td", this);
+            return ts.Render();
+            }
+        }
 }

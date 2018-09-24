@@ -1,0 +1,51 @@
+{
+  "table-def02-da": {
+    "settings": {
+      "member-separator": "_"
+    },
+    "types": {
+      "shape": {
+        "circle": {
+          "x": "int",
+          "y": "int",
+          "radius": "int"
+        },
+        "rectangle": {
+          "x": "int",
+          "y": "int",
+          "width": "int",
+          "height": "int"
+        },
+        "triangle": {
+          "base": "int",
+          "height": "int",
+          "angle": "int"
+        }
+      },
+      "person": {
+        "biological": {
+          "name": "varchar(max)",
+          "age": "int",
+          "height": "int",
+          "favoriteshape": "shape"
+        },
+        "legal": {
+          "name": "varchar(max)",
+          "cvr": "int",
+          "address": "address"
+        }
+      },
+      "address": {
+        "address": {
+          "street": "varchar(max)",
+          "street-number": "int"
+        }
+      }
+    },
+    "members": {
+      "lot": "shape",
+      "owner": "person",
+      "tenant": "person"
+    }
+  }
+}
