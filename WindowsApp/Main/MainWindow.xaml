@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WindowsApp.Main"
+        xmlns:gen="clr-namespace:WindowsApp.Generic"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Window.DataContext>
@@ -11,18 +12,59 @@
     </Window.DataContext>
     <Window.CommandBindings>
         <CommandBinding Command="local:Commands.LoadTableDefinition" CanExecute="LoadTableDefinition_CanExecute" Executed="LoadTableDefinition_Executed"/>
+        <CommandBinding x:Name="ExpandAll" Command="local:Commands.ExpandAll" Executed="ExpandAll_Executed"/>
     </Window.CommandBindings>
     <DockPanel>
         <DockPanel DockPanel.Dock="Top">
+            <Button DockPanel.Dock="Right" Name="btnExpandAll" Command="local:Commands.ExpandAll">Expand all</Button>
             <Button DockPanel.Dock="Right" Name="btnLoadTableDefinition" Command="local:Commands.LoadTableDefinition">Load table definition</Button>
             <TextBox Name="txtTableDefinitionFilename" Text="{Binding TableDefinitionFilename}"/>
         </DockPanel>
-        <TreeView Name="tvTableDefinition" ItemsSource="{Binding TableDefinitionItems}">
-            <TreeView.ItemTemplate>
+        <gen:EasyTreeView x:Name="tvTableDefinition" ItemsSource="{Binding TableDefinitionItems}" MyProp="20">
+            <gen:EasyTreeView.ItemContainerStyle>
+                <Style TargetType="{x:Type TreeViewItem}">
+                    <Setter Property="FontWeight" Value="Normal" />
+                    <Style.Triggers>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter Property="FontWeight" Value="Bold" />
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </gen:EasyTreeView.ItemContainerStyle>
+            <gen:EasyTreeView.Resources>
                 <HierarchicalDataTemplate ItemsSource="{Binding Children}" DataType="{x:Type local:TabDefItem}">
+                    <HierarchicalDataTemplate.Resources>
+                        <Style TargetType="TextBlock">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Type}" Value="{x:Type local:TabDefMember}">
+                                    <Setter Property="Foreground" Value="Blue"/>
+                                    <Setter Property="TextDecorations">
+                                        <Setter.Value>
+                                            <TextDecorationCollection>
+                                                <TextDecoration>
+                                                    <TextDecoration.Pen>
+                                                        <Pen Brush="Blue" Thickness="1"/>
+                                                    </TextDecoration.Pen>
+                                                </TextDecoration>
+                                            </TextDecorationCollection>
+                                        </Setter.Value>
+                                    </Setter>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding Type}" Value="{x:Type local:TabDefPrimitive}">
+                                    <Setter Property="Foreground" Value="Blue"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding Type}" Value="{x:Type local:TabDefSignal}">
+                                    <Setter Property="Foreground" Value="DarkRed"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding Type}" Value="{x:Type local:TabDefAlternative}">
+                                    <Setter Property="FontStyle" Value="Italic"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </HierarchicalDataTemplate.Resources>
                     <TextBlock Text="{Binding Label}"/>
                 </HierarchicalDataTemplate>
-            </TreeView.ItemTemplate>
-        </TreeView>
+            </gen:EasyTreeView.Resources>
+        </gen:EasyTreeView>
     </DockPanel>
 </Window>

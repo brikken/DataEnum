@@ -68,6 +68,8 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Generic\EasyTreeView.cs" />
+    <Compile Include="Generic\TreeItemViewModel.cs" />
     <Compile Include="Main\MainViewModel.cs" />
     <Compile Include="Main\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>

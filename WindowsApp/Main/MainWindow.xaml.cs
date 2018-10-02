@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -34,6 +35,24 @@ namespace WindowsApp.Main
         {
             viewModel.LoadTableDefinition();
         }
+
+        private void ExpandAll_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            ExpandAllNodes(tvTableDefinition.Items);
+        }
+
+        private void ExpandAllNodes(ICollectionView itemCol)
+        {
+            foreach (var item in itemCol)
+            {
+                var treeItem = item as TabDefItem;
+                if (treeItem != null)
+                {
+                    ExpandAllNodes(treeItem.Items);
+                    treeItem.IsExpanded = true;
+                }
+            }
+        }
     }
 
     class Commands
@@ -43,6 +62,13 @@ namespace WindowsApp.Main
             "LoadTableDefinition",
             typeof(MainWindow),
             new InputGestureCollection() { new KeyGesture(Key.L, ModifierKeys.Control) }
+            );
+
+        public static readonly RoutedUICommand ExpandAll = new RoutedUICommand(
+            "Expand all nodes",
+            "ExpandAll",
+            typeof(MainWindow),
+            new InputGestureCollection() { new KeyGesture(Key.X, ModifierKeys.Alt | ModifierKeys.Control) }
             );
     }
 }

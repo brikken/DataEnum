@@ -7,6 +7,8 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Input;
 
 namespace WindowsApp.Main
@@ -35,10 +37,17 @@ namespace WindowsApp.Main
         }
     }
 
-    class TabDefItem
+    class TabDefItem : Generic.TreeItemViewModel
     {
-        public ObservableCollection<TabDefItem> Children { get; set; }
+        public ObservableCollection<TabDefItem> Children { get; set; } = new ObservableCollection<TabDefItem>();
         public string Label { get; set; }
+        public ICollectionView Items
+        {
+            get
+            {
+                return new CollectionViewSource() { Source = Children }.View;
+            }
+        }
 
         public static ObservableCollection<TabDefItem> FromTableDefinition(TableDefinition tableDefinition)
         {
@@ -50,17 +59,17 @@ namespace WindowsApp.Main
             IEnumerable<TabDefItem> children = member.alternatives.Select(alt => FromAlternative(alt));
             if (member.signal)
             {
-                children = children.Prepend(new TabDefItem() { Label = member.signalFullname });
+                children = children.Prepend(new TabDefSignal() { Label = member.signalFullname });
             }
 
             TabDefItem tabDefItem;
             if (member.dataType.Primitive)
             {
-                tabDefItem = new TabDefPrimitive();
+                tabDefItem = new TabDefPrimitive() { DataTypeName = member.dataType.name };
             }
             else
             {
-                tabDefItem = new TabDefMember();
+                tabDefItem = new TabDefMember() { DataTypeName = member.dataType.name };
             }
             tabDefItem.Label = member.fullname;
             tabDefItem.Children = new ObservableCollection<TabDefItem>(children);
@@ -77,8 +86,19 @@ namespace WindowsApp.Main
         }
     }
 
-    class TabDefMember : TabDefItem { }
+    class TabDefTyped : TabDefItem
+    {
+        public string DataTypeName { get; set; }
+        public string LabelWithType
+        {
+            get
+            {
+                return Label + " (" + DataTypeName + ")";
+            }
+        }
+    }
+    class TabDefMember : TabDefTyped { }
     class TabDefAlternative : TabDefItem { }
     class TabDefSignal : TabDefItem { }
-    class TabDefPrimitive : TabDefItem { }
+    class TabDefPrimitive : TabDefTyped { }
 }
