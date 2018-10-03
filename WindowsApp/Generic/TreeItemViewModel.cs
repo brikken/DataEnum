@@ -1,6 +1,7 @@
 ﻿using PropertyChanged;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
@@ -8,8 +9,31 @@ using System.Threading.Tasks;
 
 namespace WindowsApp.Generic
 {
+    public interface ITreeItemViewModel : IItemViewModel
+    {
+        bool IsExpanded { get; set; }
+    }
+
+    public interface IItemViewModel
+    {
+        bool IsSelected { get; set; }
+        ObservableCollection<ItemProperty> Properties { get; }
+    }
+
+    public interface IItemProperty
+    {
+        string Name { get; }
+        string Value { get; }
+    }
+
+    public class ItemProperty : IItemProperty
+    {
+        public string Name { get; set; }
+        public string Value { get; set; }
+    }
+
     [DoNotNotify]
-    abstract class TreeItemViewModel : INotifyPropertyChanged
+    abstract class TreeItemViewModel : INotifyPropertyChanged, ITreeItemViewModel
     {
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged(string propertyName)
@@ -58,6 +82,20 @@ namespace WindowsApp.Generic
             get
             {
                 return GetType();
+            }
+        }
+
+        public ObservableCollection<ItemProperty> Properties
+        {
+            get
+            {
+                return new ObservableCollection<ItemProperty>(
+                    GetType()
+                        .GetProperties(System.Reflection.BindingFlags.Public)
+                        .OrderBy(prop => prop.Name)
+                        .Select(prop => (ItemProperty)new ItemProperty() { Name = prop.Name, Value = prop.GetValue(this).ToString() })
+                        .ToList()
+                );
             }
         }
     }

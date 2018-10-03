@@ -20,6 +20,41 @@
             <Button DockPanel.Dock="Right" Name="btnLoadTableDefinition" Command="local:Commands.LoadTableDefinition">Load table definition</Button>
             <TextBox Name="txtTableDefinitionFilename" Text="{Binding TableDefinitionFilename}"/>
         </DockPanel>
+        <StackPanel DockPanel.Dock="Right">
+            <Grid>
+                <Grid.Resources>
+                    <Style TargetType="{x:Type TextBox}">
+                        <Setter Property="IsEnabled" Value="False"/>
+                    </Style>
+                    <Style TargetType="{x:Type Control}">
+                        <Setter Property="BorderBrush" Value="Black"/>
+                        <Setter Property="BorderThickness" Value="1"/>
+                    </Style>
+                </Grid.Resources>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition MinWidth="100" Width="*"/>
+                    <ColumnDefinition MinWidth="100" Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <TextBlock Grid.Row="0" Grid.Column="0">Name</TextBlock>
+                <TextBox Name="TxtName" Grid.Row="0" Grid.Column="1" Text="{Binding ElementName=tvTableDefinition, Path=SelectedItem.Label}"/>
+                <TextBlock Grid.Row="1" Grid.Column="0">Data type</TextBlock>
+                <TextBox Name="TxtDataType" Grid.Row="1" Grid.Column="1" Text="{Binding ElementName=tvTableDefinition, Path=SelectedItem.DataTypeName}"/>
+            </Grid>
+            <ListView ItemsSource="{Binding ElementName=tvTableDefinition, Path=SelectedItem.Properties}">
+                <ListView.ItemTemplate>
+                    <DataTemplate DataType="{x:Type gen:ItemProperty}">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="{Binding Name}"/>
+                            <TextBox IsEnabled="False" Text="{Binding Value}"/>
+                        </StackPanel>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </StackPanel>
         <gen:EasyTreeView x:Name="tvTableDefinition" ItemsSource="{Binding TableDefinitionItems}" MyProp="20">
             <gen:EasyTreeView.ItemContainerStyle>
                 <Style TargetType="{x:Type TreeViewItem}">
