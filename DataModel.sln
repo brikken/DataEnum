@@ -14,6 +14,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj
 		{D09AC505-095E-4973-B1F0-F2BADD55D1D4} = {D09AC505-095E-4973-B1F0-F2BADD55D1D4}
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataBiTemporal", "DataBiTemporal\DataBiTemporal.csproj", "{F48BE988-5716-4636-8FAD-84F426FD2C0B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -36,6 +38,10 @@ Global
 		{5E8CDBD4-B51F-467B-B0E0-BFD46D8F413A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5E8CDBD4-B51F-467B-B0E0-BFD46D8F413A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5E8CDBD4-B51F-467B-B0E0-BFD46D8F413A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F48BE988-5716-4636-8FAD-84F426FD2C0B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F48BE988-5716-4636-8FAD-84F426FD2C0B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F48BE988-5716-4636-8FAD-84F426FD2C0B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F48BE988-5716-4636-8FAD-84F426FD2C0B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
