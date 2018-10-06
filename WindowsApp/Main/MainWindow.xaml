@@ -86,14 +86,22 @@
                     </gen:EasyTreeView.Resources>
                 </gen:EasyTreeView>
                 <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Center" VerticalAlignment="Stretch"/>
-                <ListView Grid.Column="2" ItemsSource="{Binding ElementName=tvTableDefinition, Path=SelectedItem.Properties}">
+                <ListView Name="LvProperties" Grid.Column="2" ItemsSource="{Binding ElementName=tvTableDefinition, Path=SelectedItem.Properties}">
                     <ListView.View>
                         <GridView>
-                            <GridViewColumn Header="Property" DisplayMemberBinding="{Binding Name}" Width="150"/>
-                            <GridViewColumn Header="Value" DisplayMemberBinding="{Binding Value}" Width="200"/>
+                            <GridViewColumn x:Name="LvPropertiesColProperty" Header="Property" DisplayMemberBinding="{Binding Name}" Width="150"/>
+                            <GridViewColumn Header="Value" DisplayMemberBinding="{Binding Value}" Width="{Binding ElementName=LvPropertiesColValueProxy, Path=ActualWidth}"/>
                         </GridView>
                     </ListView.View>
                 </ListView>
+                <Grid Grid.Column="2" Visibility="Hidden">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="{Binding ElementName=LvPropertiesColProperty, Path=ActualWidth}"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="10"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid Grid.Column="1" Name="LvPropertiesColValueProxy"/>
+                </Grid>
             </Grid>
             <GridSplitter Grid.Row="1" Height="5" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
             <TextBox Grid.Row="2" Name="TxtSQL" Text="{Binding SQL, Mode=OneWay}" IsReadOnly="True" IsReadOnlyCaretVisible="True" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" TextWrapping="NoWrap" FontFamily="Courier New" FontSize="12" />
