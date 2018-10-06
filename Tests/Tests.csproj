@@ -49,14 +49,23 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DataBiTemporal\Parser\LexerTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="WindowsApp\ItemViewModelTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
+    <Content Include="DataBiTemporal\Parser\simple.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DataBiTemporal\DataBiTemporal.csproj">
+      <Project>{f48be988-5716-4636-8fad-84f426fd2c0b}</Project>
+      <Name>DataBiTemporal</Name>
+    </ProjectReference>
     <ProjectReference Include="..\WindowsApp\WindowsApp.csproj">
       <Project>{d09ac505-095e-4973-b1f0-f2badd55d1d4}</Project>
       <Name>WindowsApp</Name>

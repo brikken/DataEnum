@@ -7,104 +7,182 @@
         xmlns:gen="clr-namespace:WindowsApp.Generic"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
-    <Window.DataContext>
-        <local:MainViewModel x:Name="viewModel"/>
-    </Window.DataContext>
-    <Window.CommandBindings>
-        <CommandBinding x:Name="ExpandAll" Command="local:Commands.ExpandAll" Executed="ExpandAll_Executed"/>
-        <CommandBinding Command="local:Commands.LoadTableDefinition" CanExecute="LoadTableDefinition_CanExecute" Executed="LoadTableDefinition_Executed"/>
-        <CommandBinding x:Name="SelectFile" Command="local:Commands.SelectFile" Executed="SelectFile_Executed"/>
-    </Window.CommandBindings>
-    <DockPanel>
-        <DockPanel DockPanel.Dock="Top">
-            <Button DockPanel.Dock="Left" Name="BtnSelectFile">Select file</Button>
-            <Button DockPanel.Dock="Right" Name="btnExpandAll" Command="local:Commands.ExpandAll">Expand all</Button>
-            <Button DockPanel.Dock="Right" Name="btnLoadTableDefinition" Command="local:Commands.LoadTableDefinition">Load table definition</Button>
-            <TextBox Name="txtTableDefinitionFilename" Text="{Binding TableDefinitionFilename, UpdateSourceTrigger=PropertyChanged}"/>
-        </DockPanel>
-        <Grid>
-            <Grid.Resources>
-                <Style TargetType="GridSplitter">
-                    <Setter Property="IsTabStop" Value="False"/>
-                </Style>
-            </Grid.Resources>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="5"/>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
-            <Grid Grid.Row="0">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="3*"/>
-                    <ColumnDefinition Width="5"/>
-                    <ColumnDefinition Width="2*"/>
-                </Grid.ColumnDefinitions>
-                <gen:EasyTreeView Grid.Column="0" x:Name="tvTableDefinition" ItemsSource="{Binding TableDefinitionItems}" MyProp="20">
-                    <gen:EasyTreeView.ItemContainerStyle>
-                        <Style TargetType="{x:Type TreeViewItem}">
-                            <Setter Property="FontWeight" Value="Normal" />
-                            <Style.Triggers>
-                                <Trigger Property="IsSelected" Value="True">
-                                    <Setter Property="FontWeight" Value="Bold" />
-                                </Trigger>
-                            </Style.Triggers>
+    <TabControl>
+        <TabItem Header="Enum">
+            <TabItem.DataContext>
+                <local:MainViewModel x:Name="viewModel"/>
+            </TabItem.DataContext>
+            <TabItem.CommandBindings>
+                <CommandBinding x:Name="ExpandAll" Command="local:Commands.ExpandAll" Executed="ExpandAll_Executed"/>
+                <CommandBinding Command="local:Commands.LoadTableDefinition" CanExecute="LoadTableDefinition_CanExecute" Executed="LoadTableDefinition_Executed"/>
+                <CommandBinding x:Name="SelectFile" Command="local:Commands.SelectFile" Executed="SelectFile_Executed"/>
+            </TabItem.CommandBindings>
+            <DockPanel>
+                <DockPanel DockPanel.Dock="Top">
+                    <Button DockPanel.Dock="Left" Name="BtnSelectFile">Select file</Button>
+                    <Button DockPanel.Dock="Right" Name="btnExpandAll" Command="local:Commands.ExpandAll">Expand all</Button>
+                    <Button DockPanel.Dock="Right" Name="btnLoadTableDefinition" Command="local:Commands.LoadTableDefinition">Load table definition</Button>
+                    <TextBox Name="txtTableDefinitionFilename" Text="{Binding TableDefinitionFilename, UpdateSourceTrigger=PropertyChanged}"/>
+                </DockPanel>
+                <Grid>
+                    <Grid.Resources>
+                        <Style TargetType="GridSplitter">
+                            <Setter Property="IsTabStop" Value="False"/>
                         </Style>
-                    </gen:EasyTreeView.ItemContainerStyle>
-                    <gen:EasyTreeView.Resources>
-                        <HierarchicalDataTemplate ItemsSource="{Binding Children}" DataType="{x:Type local:TabDefItem}">
-                            <HierarchicalDataTemplate.Resources>
-                                <Style TargetType="TextBlock">
+                    </Grid.Resources>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="5"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <Grid Grid.Row="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="3*"/>
+                            <ColumnDefinition Width="5"/>
+                            <ColumnDefinition Width="2*"/>
+                        </Grid.ColumnDefinitions>
+                        <gen:EasyTreeView Grid.Column="0" x:Name="tvTableDefinition" ItemsSource="{Binding TableDefinitionItems}" MyProp="20">
+                            <gen:EasyTreeView.ItemContainerStyle>
+                                <Style TargetType="{x:Type TreeViewItem}">
+                                    <Setter Property="FontWeight" Value="Normal" />
                                     <Style.Triggers>
-                                        <DataTrigger Binding="{Binding Type}" Value="{x:Type local:TabDefMember}">
-                                            <Setter Property="Foreground" Value="Blue"/>
-                                            <Setter Property="TextDecorations">
-                                                <Setter.Value>
-                                                    <TextDecorationCollection>
-                                                        <TextDecoration>
-                                                            <TextDecoration.Pen>
-                                                                <Pen Brush="Blue" Thickness="1"/>
-                                                            </TextDecoration.Pen>
-                                                        </TextDecoration>
-                                                    </TextDecorationCollection>
-                                                </Setter.Value>
-                                            </Setter>
-                                        </DataTrigger>
-                                        <DataTrigger Binding="{Binding Type}" Value="{x:Type local:TabDefPrimitive}">
-                                            <Setter Property="Foreground" Value="Blue"/>
-                                        </DataTrigger>
-                                        <DataTrigger Binding="{Binding Type}" Value="{x:Type local:TabDefSignal}">
-                                            <Setter Property="Foreground" Value="DarkRed"/>
-                                        </DataTrigger>
-                                        <DataTrigger Binding="{Binding Type}" Value="{x:Type local:TabDefAlternative}">
-                                            <Setter Property="FontStyle" Value="Italic"/>
-                                        </DataTrigger>
+                                        <Trigger Property="IsSelected" Value="True">
+                                            <Setter Property="FontWeight" Value="Bold" />
+                                        </Trigger>
                                     </Style.Triggers>
                                 </Style>
-                            </HierarchicalDataTemplate.Resources>
-                            <TextBlock Text="{Binding Label}"/>
-                        </HierarchicalDataTemplate>
-                    </gen:EasyTreeView.Resources>
-                </gen:EasyTreeView>
-                <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Center" VerticalAlignment="Stretch"/>
-                <ListView Name="LvProperties" Grid.Column="2" ItemsSource="{Binding ElementName=tvTableDefinition, Path=SelectedItem.Properties}">
-                    <ListView.View>
-                        <GridView>
-                            <GridViewColumn x:Name="LvPropertiesColProperty" Header="Property" DisplayMemberBinding="{Binding Name}" Width="150"/>
-                            <GridViewColumn Header="Value" DisplayMemberBinding="{Binding Value}" Width="{Binding ElementName=LvPropertiesColValueProxy, Path=ActualWidth}"/>
-                        </GridView>
-                    </ListView.View>
-                </ListView>
-                <Grid Grid.Column="2" Visibility="Hidden">
+                            </gen:EasyTreeView.ItemContainerStyle>
+                            <gen:EasyTreeView.Resources>
+                                <HierarchicalDataTemplate ItemsSource="{Binding Children}" DataType="{x:Type local:TabDefItem}">
+                                    <HierarchicalDataTemplate.Resources>
+                                        <Style TargetType="TextBlock">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Type}" Value="{x:Type local:TabDefMember}">
+                                                    <Setter Property="Foreground" Value="Blue"/>
+                                                    <Setter Property="TextDecorations">
+                                                        <Setter.Value>
+                                                            <TextDecorationCollection>
+                                                                <TextDecoration>
+                                                                    <TextDecoration.Pen>
+                                                                        <Pen Brush="Blue" Thickness="1"/>
+                                                                    </TextDecoration.Pen>
+                                                                </TextDecoration>
+                                                            </TextDecorationCollection>
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding Type}" Value="{x:Type local:TabDefPrimitive}">
+                                                    <Setter Property="Foreground" Value="Blue"/>
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding Type}" Value="{x:Type local:TabDefSignal}">
+                                                    <Setter Property="Foreground" Value="DarkRed"/>
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding Type}" Value="{x:Type local:TabDefAlternative}">
+                                                    <Setter Property="FontStyle" Value="Italic"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </HierarchicalDataTemplate.Resources>
+                                    <TextBlock Text="{Binding Label}"/>
+                                </HierarchicalDataTemplate>
+                            </gen:EasyTreeView.Resources>
+                        </gen:EasyTreeView>
+                        <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Center" VerticalAlignment="Stretch"/>
+                        <ListView Name="LvProperties" Grid.Column="2" ItemsSource="{Binding ElementName=tvTableDefinition, Path=SelectedItem.Properties}">
+                            <ListView.View>
+                                <GridView>
+                                    <GridViewColumn x:Name="LvPropertiesColProperty" Header="Property" DisplayMemberBinding="{Binding Name}" Width="150"/>
+                                    <GridViewColumn Header="Value" DisplayMemberBinding="{Binding Value}" Width="{Binding ElementName=LvPropertiesColValueProxy, Path=ActualWidth}"/>
+                                </GridView>
+                            </ListView.View>
+                        </ListView>
+                        <Grid Grid.Column="2" Visibility="Hidden">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="{Binding ElementName=LvPropertiesColProperty, Path=ActualWidth}"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="10"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid Grid.Column="1" Name="LvPropertiesColValueProxy"/>
+                        </Grid>
+                    </Grid>
+                    <GridSplitter Grid.Row="1" Height="5" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
+                    <TextBox Grid.Row="2" Name="TxtSQL" Text="{Binding SQL, Mode=OneWay}" IsReadOnly="True" IsReadOnlyCaretVisible="True" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" TextWrapping="NoWrap" FontFamily="Courier New" FontSize="12" />
+                </Grid>
+            </DockPanel>
+        </TabItem>
+        <TabItem Header="BiTemporal">
+            <TabItem.DataContext>
+                <local:MainBiTempViewModel/>
+            </TabItem.DataContext>
+            <TabItem.CommandBindings>
+                
+            </TabItem.CommandBindings>
+            <TabItem.Resources>
+                <local:FileToTokensConverter x:Key="FileToTokensConverter"/>
+                <local:FileToChannelsConverter x:Key="FileToChannelsConverter"/>
+                <local:TokenToPropertiesConverter x:Key="TokenToPropertiesConverter"/>
+                <CollectionViewSource x:Key="Files" Source="{Binding Files}"/>
+                <CollectionViewSource x:Key="Channels" Source="{Binding Source={StaticResource Files}, Path=/, Converter={StaticResource FileToChannelsConverter}}"/>
+                <CollectionViewSource x:Key="Tokens" Source="{Binding Source={StaticResource Files}, Path=/, Converter={StaticResource FileToTokensConverter}}"/>
+                <CollectionViewSource x:Key="TokenProperties" Source="{Binding Source={StaticResource Tokens}, Path=/, Converter={StaticResource TokenToPropertiesConverter}}"/>
+            </TabItem.Resources>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="5"/>
+                    <ColumnDefinition Width="3*"/>
+                </Grid.ColumnDefinitions>
+                <DockPanel Grid.Column="0">
+                    <DockPanel DockPanel.Dock="Top">
+                        <Button DockPanel.Dock="Left" Name="BtnSelectFolder" Click="BtnSelectFolder_Click">_Select folder</Button>
+                        <TextBox Name="TxtFolder" Text="{Binding Folder}"/>
+                    </DockPanel>
+                    <ListBox DockPanel.Dock="Bottom" ItemsSource="{Binding Source={StaticResource Channels}}">
+                        <ListBox.ItemContainerStyle>
+                            <Style>
+                            </Style>
+                        </ListBox.ItemContainerStyle>
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <CheckBox IsChecked="True">
+                                    <TextBlock Text="{Binding}"/>
+                                </CheckBox>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                    <ListBox Name="LbFiles" SelectedIndex="0" ItemsSource="{Binding Source={StaticResource Files}}">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Name}"/>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </DockPanel>
+                <GridSplitter Grid.Column="1" Width="5" VerticalAlignment="Stretch" HorizontalAlignment="Center"/>
+                <Grid Grid.Column="2">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="{Binding ElementName=LvPropertiesColProperty, Path=ActualWidth}"/>
                         <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="10"/>
                     </Grid.ColumnDefinitions>
-                    <Grid Grid.Column="1" Name="LvPropertiesColValueProxy"/>
+                    <DockPanel Grid.Column="0">
+                        <TextBlock DockPanel.Dock="Top">Tokens</TextBlock>
+                        <ListView DockPanel.Dock="Bottom" ItemsSource="{Binding Source={StaticResource TokenProperties}}">
+                            <ListView.View>
+                                <GridView>
+                                    <GridViewColumn Header="Property" DisplayMemberBinding="{Binding Property}"/>
+                                    <GridViewColumn Header="Value" DisplayMemberBinding="{Binding Value}"/>
+                                </GridView>
+                            </ListView.View>
+                        </ListView>
+                        <ListBox SelectedIndex="0" ItemsSource="{Binding Source={StaticResource Tokens}}">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Text}"/>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </DockPanel>
                 </Grid>
             </Grid>
-            <GridSplitter Grid.Row="1" Height="5" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
-            <TextBox Grid.Row="2" Name="TxtSQL" Text="{Binding SQL, Mode=OneWay}" IsReadOnly="True" IsReadOnlyCaretVisible="True" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" TextWrapping="NoWrap" FontFamily="Courier New" FontSize="12" />
-        </Grid>
-    </DockPanel>
+        </TabItem>
+    </TabControl>
 </Window>

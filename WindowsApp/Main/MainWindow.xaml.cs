@@ -80,6 +80,11 @@ namespace WindowsApp.Main
                 viewModel.TableDefinitionFilename = ofd.FileName;
             }
         }
+
+        private void BtnSelectFolder_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 
     class Commands
