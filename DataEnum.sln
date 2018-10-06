@@ -9,6 +9,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleApp", "ConsoleApp\Co
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WindowsApp", "WindowsApp\WindowsApp.csproj", "{D09AC505-095E-4973-B1F0-F2BADD55D1D4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{5E8CDBD4-B51F-467B-B0E0-BFD46D8F413A}"
+	ProjectSection(ProjectDependencies) = postProject
+		{D09AC505-095E-4973-B1F0-F2BADD55D1D4} = {D09AC505-095E-4973-B1F0-F2BADD55D1D4}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +32,10 @@ Global
 		{D09AC505-095E-4973-B1F0-F2BADD55D1D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D09AC505-095E-4973-B1F0-F2BADD55D1D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D09AC505-095E-4973-B1F0-F2BADD55D1D4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5E8CDBD4-B51F-467B-B0E0-BFD46D8F413A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5E8CDBD4-B51F-467B-B0E0-BFD46D8F413A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5E8CDBD4-B51F-467B-B0E0-BFD46D8F413A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5E8CDBD4-B51F-467B-B0E0-BFD46D8F413A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

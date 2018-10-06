@@ -13,27 +13,48 @@ using System.Windows.Input;
 
 namespace WindowsApp.Main
 {
+    class InvalidTableDefinitionFileException : Exception
+    {
+        public IList<string> TableDefinitionNames { get; set; } = new List<string>();
+    }
+
     class MainViewModel : INotifyPropertyChanged
     {
+
+        private const string DefaultTabDefFolder = "TableDefinitions";
+
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public string TableDefinitionFilename { get; set; } = @"table-def02.json";
-        public string TableDefinitionFilenameFull {
+        public string SQL { get; private set; }
+        public string TableDefinitionFilename { get; set; } = new FileInfo(Path.Combine(Directory.GetCurrentDirectory(), DefaultTabDefFolder, @"table-def02.json")).FullName;
+        public string TableDefinitionsFolder {
             get {
-                return (new FileInfo(Path.Combine(Directory.GetCurrentDirectory(), "TableDefinitions", TableDefinitionFilename))).FullName;
+                return Path.Combine(Directory.GetCurrentDirectory(), DefaultTabDefFolder);
             }
         }
         public ObservableCollection<TabDefItem> TableDefinitionItems { get; set; }
 
         public bool CanLoadTableDefinition()
         {
-            return (new FileInfo(TableDefinitionFilenameFull)).Exists;
+            return new FileInfo(TableDefinitionFilename).Exists;
         }
 
         public void LoadTableDefinition()
         {
-            var tableDefinition = TableDefinition.FromFile(TableDefinitionFilenameFull).Single();
+            ICollection<TableDefinition> tabDefs = new Collection<TableDefinition>();
+            TableDefinition tableDefinition;
+            try
+            {
+                tabDefs = TableDefinition.FromFile(TableDefinitionFilename);
+                tableDefinition = tabDefs.Single();
+            }
+            catch (InvalidOperationException e)
+            {
+                InvalidTableDefinitionFileException invalidTableDefinitionFileException = new InvalidTableDefinitionFileException() { TableDefinitionNames = tabDefs.Select(td => td.name).ToList() };
+                throw invalidTableDefinitionFileException;
+            }
             TableDefinitionItems = TabDefItem.FromTableDefinition(tableDefinition);
+            SQL = tableDefinition.GetSQL();
         }
     }
 

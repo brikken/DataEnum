@@ -72,9 +72,9 @@ namespace WindowsApp.Generic
 
         private static Style ApplyDefaultItemContainerStyle(Style style)
         {
-            Setter setterIsExpanded = new Setter(TreeViewItem.IsExpandedProperty, new Binding("IsExpanded") { Mode = BindingMode.TwoWay });
+            Setter setterIsExpanded = new Setter(TreeViewItem.IsExpandedProperty, new Binding("IsExpanded") { Mode = BindingMode.TwoWay, UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged });
             style.Setters.Add(setterIsExpanded);
-            Setter setterIsSelected = new Setter(TreeViewItem.IsSelectedProperty, new Binding("IsSelected") { Mode = BindingMode.TwoWay });
+            Setter setterIsSelected = new Setter(TreeViewItem.IsSelectedProperty, new Binding("IsSelected") { Mode = BindingMode.TwoWay, UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged });
             style.Setters.Add(setterIsSelected);
             return style;
         }

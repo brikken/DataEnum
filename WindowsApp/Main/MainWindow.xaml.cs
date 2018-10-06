@@ -1,6 +1,8 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -33,7 +35,15 @@ namespace WindowsApp.Main
 
         private void LoadTableDefinition_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            viewModel.LoadTableDefinition();
+            try
+            {
+                viewModel.LoadTableDefinition();
+            }
+            catch (InvalidTableDefinitionFileException ex)
+            {
+                string text = $"The table definition file is invalid. It must contain exactly one table definition.\nTable definitions in file:\n{string.Join("\n", ex.TableDefinitionNames)}";
+                MessageBox.Show(text, "Invalid file", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         private void ExpandAll_Executed(object sender, ExecutedRoutedEventArgs e)
@@ -53,10 +63,34 @@ namespace WindowsApp.Main
                 }
             }
         }
+
+        private void SelectFile_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            var ofd = new OpenFileDialog();
+            ofd.AddExtension = true;
+            ofd.DefaultExt = "json";
+            ofd.Filter = "JSON|*.json|All files|*.*";
+            ofd.FilterIndex = 0;
+            ofd.InitialDirectory = viewModel.TableDefinitionsFolder;
+            ofd.Multiselect = false;
+            ofd.Title = "Select file with table definition";
+            ofd.ValidateNames = true;
+            if (ofd.ShowDialog() ?? false)
+            {
+                viewModel.TableDefinitionFilename = ofd.FileName;
+            }
+        }
     }
 
     class Commands
     {
+        public static readonly RoutedUICommand ExpandAll = new RoutedUICommand(
+            "Expand all nodes",
+            "ExpandAll",
+            typeof(MainWindow),
+            new InputGestureCollection() { new KeyGesture(Key.X, ModifierKeys.Alt | ModifierKeys.Control) }
+            );
+
         public static readonly RoutedUICommand LoadTableDefinition = new RoutedUICommand(
             "Load table definition from file",
             "LoadTableDefinition",
@@ -64,11 +98,11 @@ namespace WindowsApp.Main
             new InputGestureCollection() { new KeyGesture(Key.L, ModifierKeys.Control) }
             );
 
-        public static readonly RoutedUICommand ExpandAll = new RoutedUICommand(
-            "Expand all nodes",
-            "ExpandAll",
+        public static readonly RoutedUICommand SelectFile = new RoutedUICommand(
+            "Select file",
+            "SelectFile",
             typeof(MainWindow),
-            new InputGestureCollection() { new KeyGesture(Key.X, ModifierKeys.Alt | ModifierKeys.Control) }
+            new InputGestureCollection() { new KeyGesture(Key.S, ModifierKeys.Alt) }
             );
     }
 }

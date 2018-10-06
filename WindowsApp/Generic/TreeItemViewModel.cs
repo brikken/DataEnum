@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -17,7 +18,7 @@ namespace WindowsApp.Generic
     public interface IItemViewModel
     {
         bool IsSelected { get; set; }
-        ObservableCollection<ItemProperty> Properties { get; }
+        ObservableCollection<IItemProperty> Properties { get; }
     }
 
     public interface IItemProperty
@@ -32,13 +33,27 @@ namespace WindowsApp.Generic
         public string Value { get; set; }
     }
 
-    [DoNotNotify]
-    abstract class TreeItemViewModel : INotifyPropertyChanged, ITreeItemViewModel
+    public abstract class ItemViewModel : INotifyPropertyChanged, IItemViewModel
     {
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        public ObservableCollection<IItemProperty> Properties
+        {
+            get
+            {
+                return new ObservableCollection<IItemProperty>(
+                    GetType()
+                        .GetProperties()
+                        .Where(prop => prop.Name != "Properties")
+                        .OrderBy(prop => prop.Name)
+                        .Select(prop => new ItemProperty() { Name = prop.Name, Value = prop.GetValue(this).ToString() })
+                        .ToList()
+                );
+            }
         }
 
         bool _isSelected = false;
@@ -58,7 +73,11 @@ namespace WindowsApp.Generic
                 }
             }
         }
+    }
 
+    [DoNotNotify]
+    abstract class TreeItemViewModel : ItemViewModel, INotifyPropertyChanged, ITreeItemViewModel
+    {
         bool _isExpanded = false;
         /// <summary>
         /// Gets/sets whether the TreeViewItem 
@@ -82,20 +101,6 @@ namespace WindowsApp.Generic
             get
             {
                 return GetType();
-            }
-        }
-
-        public ObservableCollection<ItemProperty> Properties
-        {
-            get
-            {
-                return new ObservableCollection<ItemProperty>(
-                    GetType()
-                        .GetProperties(System.Reflection.BindingFlags.Public)
-                        .OrderBy(prop => prop.Name)
-                        .Select(prop => (ItemProperty)new ItemProperty() { Name = prop.Name, Value = prop.GetValue(this).ToString() })
-                        .ToList()
-                );
             }
         }
     }
