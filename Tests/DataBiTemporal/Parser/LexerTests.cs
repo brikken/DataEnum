@@ -12,7 +12,7 @@ namespace Tests.DataBiTemporal.Parser
         public void TokenCountTest()
         {
             var code = File.ReadAllText(@"DataBiTemporal\Parser\simple.sql");
-            Assert.AreEqual(35, LexerHelpers.GetTokenCount(code));
+            Assert.AreEqual(56, LexerHelpers.GetTokenCount(code));
         }
     }
 }

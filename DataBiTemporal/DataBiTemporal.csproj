@@ -55,6 +55,7 @@
       <DependentUpon>BiTempDef.g4</DependentUpon>
     </Compile>
     <Compile Include="Parser\LexerHelpers.cs" />
+    <Compile Include="Parser\ParserHelpers.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

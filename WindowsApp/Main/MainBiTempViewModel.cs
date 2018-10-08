@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Data;
 using Antlr4.Runtime;
+using Antlr4.Runtime.Tree;
 using DataBiTemporal.Parser;
 
 namespace WindowsApp.Main
@@ -91,7 +92,67 @@ namespace WindowsApp.Main
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             var text = value as string;
-            return text.Replace("\n", " ").Replace("\r", "");
+            return text?.Replace("\n", " ").Replace("\r", "");
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    class FileToRootContextConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            string path = (value as FileInfo).FullName;
+            string code = File.ReadAllText(path);
+            return new List<IParseTree>() { ParserHelpers.GetRootContext(code) };
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    class ContextToChildContextsConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            var context = value as IParseTree;
+            var children = new List<IParseTree>();
+            foreach (var child in Trees.GetDescendants(context))
+            {
+                if (child.Parent == context)
+                {
+                    children.Add(child);
+                }
+            }
+            return children;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    class ContextToPropertiesConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            var properties = value
+                .GetType()
+                .GetProperties()
+                .Select(prop => new { Type = "Property", prop.Name, Value = prop.GetValue(value)?.ToString() })
+                .ToList();
+            var fields = value
+                .GetType()
+                .GetFields()
+                .Select(field => new { Type = "Field", field.Name, Value = field.GetValue(value)?.ToString() })
+                .ToList();
+            return properties.Concat(fields).OrderBy(mem => mem.Name);
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

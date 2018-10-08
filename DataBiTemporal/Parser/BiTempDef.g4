@@ -5,15 +5,15 @@ grammar BiTempDef;
  */
 
 compileUnit
-	:	EOF
+	:	tableDef* EOF
 	;
 
 tableDef
-	:	CREATE TABLE (dbId '.' schId '.' | schId '.')? tabId '(' colDef (',' colDef)* ')' tabOpt* ';'?
+	:	CREATE TABLE (db=OBJ_ID '.' sch=OBJ_ID '.' | sch=OBJ_ID '.')? tab=OBJ_ID '(' cols+=colDef (',' cols+=colDef)* ')' opts+=tabOpt* ';'?
 	;
 
 colDef
-	:	colId colType colOpt*
+	:	col=OBJ_ID type=colType opts+=colOpt*
 	;
 
 colType
@@ -29,21 +29,17 @@ colOpt
 	;
 
 tabOpt
-	:	DTWITH '(' dtwithOpt (',' dtwithOpt)* ')'
+	:	DTWITH '(' opts+=dtwithOpt (',' opts+=dtwithOpt)* ')'
 	;
 
 dtwithOpt
-	:	BITEMPORAL ('(' btOpt (',' btOpt)* ')')?
+	:	BITEMPORAL ('(' opts+=btOpt (',' opts+=btOpt)* ')')?
 	;
 
 btOpt
-	:	BTSCHEMA '=' schId
+	:	BTSCHEMA '=' sch=OBJ_ID
 	;
 
-dbId	:	OBJ_ID;
-schId	:	OBJ_ID;
-tabId	:	OBJ_ID;
-colId	:	OBJ_ID;
 /*
  * Lexer Rules
  */
@@ -66,6 +62,6 @@ OBJ_ID
 	|	'[' .*? ']'
 	;
 
-C_INLINE	:	'--' ~[\n]*? -> channel(HIDDEN);
+C_INLINE	:	'--' ~[\r\n]* -> channel(HIDDEN);
 C_BLOCK		:	'/*' .*? '*/' -> channel(HIDDEN);
 WS			:	[ \r\n\t]+ -> channel(HIDDEN);

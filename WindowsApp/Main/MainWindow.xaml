@@ -120,12 +120,17 @@
             <TabItem.Resources>
                 <local:FileToTokensConverter x:Key="FileToTokensConverter"/>
                 <local:FileToChannelsConverter x:Key="FileToChannelsConverter"/>
+                <local:FileToRootContextConverter x:Key="FileToRootContextConverter"/>
                 <local:TokenToPropertiesConverter x:Key="TokenToPropertiesConverter"/>
                 <local:StripLineBreaksConverter x:Key="StripLineBreaksConverter"/>
+                <local:ContextToChildContextsConverter x:Key="ContextToChildContextsConverter"/>
+                <local:ContextToPropertiesConverter x:Key="ContextToPropertiesConverter"/>
                 <CollectionViewSource x:Key="Files" Source="{Binding Files}"/>
                 <CollectionViewSource x:Key="Channels" Source="{Binding Source={StaticResource Files}, Path=/, Converter={StaticResource FileToChannelsConverter}}"/>
                 <CollectionViewSource x:Key="Tokens" Source="{Binding Source={StaticResource Files}, Path=/, Converter={StaticResource FileToTokensConverter}}"/>
                 <CollectionViewSource x:Key="TokenProperties" Source="{Binding Source={StaticResource Tokens}, Path=/, Converter={StaticResource TokenToPropertiesConverter}}"/>
+                <CollectionViewSource x:Key="RootContexts" Source="{Binding Source={StaticResource Files}, Path=/, Converter={StaticResource FileToRootContextConverter}}"/>
+                <CollectionViewSource x:Key="ContextProperties" Source="{Binding Source={StaticResource RootContexts}, Path=/, Converter={StaticResource ContextToPropertiesConverter}}"/>
             </TabItem.Resources>
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -139,15 +144,19 @@
                         <TextBox Name="TxtFolder" Text="{Binding Folder}"/>
                     </DockPanel>
                     <ListBox DockPanel.Dock="Bottom" ItemsSource="{Binding Source={StaticResource Channels}}">
-                        <ListBox.ItemContainerStyle>
-                            <Style>
+                        <ListBox.Resources>
+                            <Style TargetType="CheckBox">
+                                <Setter Property="IsChecked" Value="True"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding}" Value="0">
+                                        <Setter Property="IsChecked" Value="False"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
                             </Style>
-                        </ListBox.ItemContainerStyle>
+                        </ListBox.Resources>
                         <ListBox.ItemTemplate>
                             <DataTemplate>
-                                <CheckBox IsChecked="True">
-                                    <TextBlock Text="{Binding}"/>
-                                </CheckBox>
+                                <CheckBox Content="{Binding}"/>
                             </DataTemplate>
                         </ListBox.ItemTemplate>
                     </ListBox>
@@ -162,6 +171,7 @@
                 <GridSplitter Grid.Column="1" Width="5" VerticalAlignment="Stretch" HorizontalAlignment="Center"/>
                 <Grid Grid.Column="2">
                     <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
                     <DockPanel Grid.Column="0">
@@ -181,6 +191,30 @@
                                 </DataTemplate>
                             </ListBox.ItemTemplate>
                         </ListBox>
+                    </DockPanel>
+                    <DockPanel Grid.Column="1">
+                        <TextBlock DockPanel.Dock="Top">Rules</TextBlock>
+                        <ListView DockPanel.Dock="Bottom" ItemsSource="{Binding Source={StaticResource ContextProperties}}">
+                            <ListView.View>
+                                <GridView>
+                                    <GridViewColumn Header="Type" DisplayMemberBinding="{Binding Type}"/>
+                                    <GridViewColumn Header="Name" DisplayMemberBinding="{Binding Name}"/>
+                                    <GridViewColumn Header="Value" DisplayMemberBinding="{Binding Value, Converter={StaticResource StripLineBreaksConverter}}"/>
+                                </GridView>
+                            </ListView.View>
+                        </ListView>
+                        <TreeView ItemsSource="{Binding Source={StaticResource RootContexts}}">
+                            <TreeView.Resources>
+                                <Style TargetType="TreeViewItem">
+                                    <Setter Property="IsExpanded" Value="true"/>
+                                </Style>
+                            </TreeView.Resources>
+                            <TreeView.ItemTemplate>
+                                <HierarchicalDataTemplate ItemsSource="{Binding Converter={StaticResource ContextToChildContextsConverter}}">
+                                    <TextBlock Text="{Binding}"/>
+                                </HierarchicalDataTemplate>
+                            </TreeView.ItemTemplate>
+                        </TreeView>
                     </DockPanel>
                 </Grid>
             </Grid>
