@@ -130,7 +130,6 @@
                 <CollectionViewSource x:Key="Tokens" Source="{Binding Source={StaticResource Files}, Path=/, Converter={StaticResource FileToTokensConverter}}"/>
                 <CollectionViewSource x:Key="TokenProperties" Source="{Binding Source={StaticResource Tokens}, Path=/, Converter={StaticResource TokenToPropertiesConverter}}"/>
                 <CollectionViewSource x:Key="RootContexts" Source="{Binding Source={StaticResource Files}, Path=/, Converter={StaticResource FileToRootContextConverter}}"/>
-                <CollectionViewSource x:Key="ContextProperties" Source="{Binding Source={StaticResource RootContexts}, Path=/, Converter={StaticResource ContextToPropertiesConverter}}"/>
             </TabItem.Resources>
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -194,7 +193,7 @@
                     </DockPanel>
                     <DockPanel Grid.Column="1">
                         <TextBlock DockPanel.Dock="Top">Rules</TextBlock>
-                        <ListView DockPanel.Dock="Bottom" ItemsSource="{Binding Source={StaticResource ContextProperties}}">
+                        <ListView DockPanel.Dock="Bottom" ItemsSource="{Binding ElementName=TvContexts, Path=SelectedItem, Converter={StaticResource ContextToPropertiesConverter}}">
                             <ListView.View>
                                 <GridView>
                                     <GridViewColumn Header="Type" DisplayMemberBinding="{Binding Type}"/>
@@ -203,10 +202,11 @@
                                 </GridView>
                             </ListView.View>
                         </ListView>
-                        <TreeView ItemsSource="{Binding Source={StaticResource RootContexts}}">
+                        <TreeView Name="TvContexts" ItemsSource="{Binding Source={StaticResource RootContexts}}">
                             <TreeView.Resources>
                                 <Style TargetType="TreeViewItem">
                                     <Setter Property="IsExpanded" Value="true"/>
+                                    <Setter Property="IsSelected" Value="True"/>
                                 </Style>
                             </TreeView.Resources>
                             <TreeView.ItemTemplate>

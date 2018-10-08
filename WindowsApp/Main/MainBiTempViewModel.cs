@@ -142,15 +142,32 @@ namespace WindowsApp.Main
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
+            if (value == null)
+            {
+                return new List<object>();
+            }
+
             var properties = value
                 .GetType()
                 .GetProperties()
-                .Select(prop => new { Type = "Property", prop.Name, Value = prop.GetValue(value)?.ToString() })
+                .Select(prop => new {
+                    Type = "Property",
+                    prop.Name,
+                    Value = prop.PropertyType.GetInterfaces().Count(i => i.Name == "IEnumerable") > 0
+                        ? string.Join(", ", (prop.GetValue(value) as IEnumerable<object>)?.Select(subprop => subprop.ToString()))
+                        : prop.GetValue(value)?.ToString()
+                })
                 .ToList();
             var fields = value
                 .GetType()
                 .GetFields()
-                .Select(field => new { Type = "Field", field.Name, Value = field.GetValue(value)?.ToString() })
+                .Select(field => new {
+                    Type = "Field",
+                    field.Name,
+                    Value = field.FieldType.GetInterfaces().Count(i => i.Name == "IEnumerable") > 0
+                        ? string.Join(", ", (field.GetValue(value) as IEnumerable<object>)?.Select(subfield => subfield.ToString()))
+                        : field.GetValue(value)?.ToString()
+                })
                 .ToList();
             return properties.Concat(fields).OrderBy(mem => mem.Name);
         }
