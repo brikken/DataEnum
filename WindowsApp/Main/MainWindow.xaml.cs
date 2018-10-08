@@ -26,6 +26,7 @@ namespace WindowsApp.Main
         public MainWindow()
         {
             InitializeComponent();
+            vmBiTemporal.Folder = System.IO.Path.Combine(Directory.GetCurrentDirectory() ?? "", "TableDefinitions", "BiTemporal");
         }
 
         private void LoadTableDefinition_CanExecute(object sender, CanExecuteRoutedEventArgs e)

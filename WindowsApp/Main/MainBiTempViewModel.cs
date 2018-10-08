@@ -35,7 +35,6 @@ namespace WindowsApp.Main
 
         public MainBiTempViewModel()
         {
-            Folder = Path.Combine(Directory.GetCurrentDirectory(), "TableDefinitions", "BiTemporal");
         }
     }
 
@@ -79,6 +78,20 @@ namespace WindowsApp.Main
                 .Select(prop => new { Property = prop.Name, Value = prop.GetValue(value).ToString() })
                 .OrderBy(prop => prop.Property)
                 .ToList();
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    class StripLineBreaksConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            var text = value as string;
+            return text.Replace("\n", " ").Replace("\r", "");
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

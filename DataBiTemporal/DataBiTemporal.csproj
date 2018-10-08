@@ -62,6 +62,9 @@
     <Antlr4 Include="Parser\BiTempDef.g4">
       <Generator>MSBuild:Compile</Generator>
       <CustomToolNamespace>DataBiTemporal.Parser</CustomToolNamespace>
+      <Listener>True</Listener>
+      <Visitor>True</Visitor>
+      <TargetLanguage>CSharp</TargetLanguage>
     </Antlr4>
     <None Include="README.md" />
   </ItemGroup>

@@ -112,7 +112,7 @@
         </TabItem>
         <TabItem Header="BiTemporal">
             <TabItem.DataContext>
-                <local:MainBiTempViewModel/>
+                <local:MainBiTempViewModel x:Name="vmBiTemporal"/>
             </TabItem.DataContext>
             <TabItem.CommandBindings>
                 
@@ -121,6 +121,7 @@
                 <local:FileToTokensConverter x:Key="FileToTokensConverter"/>
                 <local:FileToChannelsConverter x:Key="FileToChannelsConverter"/>
                 <local:TokenToPropertiesConverter x:Key="TokenToPropertiesConverter"/>
+                <local:StripLineBreaksConverter x:Key="StripLineBreaksConverter"/>
                 <CollectionViewSource x:Key="Files" Source="{Binding Files}"/>
                 <CollectionViewSource x:Key="Channels" Source="{Binding Source={StaticResource Files}, Path=/, Converter={StaticResource FileToChannelsConverter}}"/>
                 <CollectionViewSource x:Key="Tokens" Source="{Binding Source={StaticResource Files}, Path=/, Converter={StaticResource FileToTokensConverter}}"/>
@@ -169,7 +170,7 @@
                             <ListView.View>
                                 <GridView>
                                     <GridViewColumn Header="Property" DisplayMemberBinding="{Binding Property}"/>
-                                    <GridViewColumn Header="Value" DisplayMemberBinding="{Binding Value}"/>
+                                    <GridViewColumn Header="Value" DisplayMemberBinding="{Binding Value, Converter={StaticResource StripLineBreaksConverter}}"/>
                                 </GridView>
                             </ListView.View>
                         </ListView>
