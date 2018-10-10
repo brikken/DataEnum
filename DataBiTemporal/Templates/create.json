@@ -1,0 +1,24 @@
+{
+  "def": {
+    "name": "MyBiTempTable",
+    "schema": "dbo",
+    "btSchema": "bitemp",
+    "cols": [
+      {
+        "name": "id",
+        "opts": "INT NOT NULL"
+      },
+      {
+        "name": "myNum",
+        "opts": "DECIMAL(18,2)"
+      },
+      {
+        "name": "myText",
+        "opts": "VARCHAR(200)"
+      }
+    ],
+    "primcols": [
+      "id"
+    ]
+  }
+}

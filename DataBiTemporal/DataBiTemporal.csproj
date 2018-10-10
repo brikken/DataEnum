@@ -68,6 +68,8 @@
       <TargetLanguage>CSharp</TargetLanguage>
     </Antlr4>
     <None Include="README.md" />
+    <None Include="Templates\create.json" />
+    <None Include="Templates\create.stg" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

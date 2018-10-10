@@ -115,7 +115,7 @@
                 <local:MainBiTempViewModel x:Name="vmBiTemporal"/>
             </TabItem.DataContext>
             <TabItem.CommandBindings>
-                
+
             </TabItem.CommandBindings>
             <TabItem.Resources>
                 <local:FileToTokensConverter x:Key="FileToTokensConverter"/>
@@ -133,11 +133,13 @@
             </TabItem.Resources>
             <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="0*"/>
+                    <ColumnDefinition Width="26*"/>
+                    <ColumnDefinition Width="169*"/>
                     <ColumnDefinition Width="5"/>
-                    <ColumnDefinition Width="3*"/>
+                    <ColumnDefinition Width="586*"/>
                 </Grid.ColumnDefinitions>
-                <DockPanel Grid.Column="0">
+                <DockPanel Grid.Column="0" Grid.ColumnSpan="3">
                     <DockPanel DockPanel.Dock="Top">
                         <Button DockPanel.Dock="Left" Name="BtnSelectFolder" Click="BtnSelectFolder_Click">_Select folder</Button>
                         <TextBox Name="TxtFolder" Text="{Binding Folder}"/>
@@ -167,8 +169,8 @@
                         </ListBox.ItemTemplate>
                     </ListBox>
                 </DockPanel>
-                <GridSplitter Grid.Column="1" Width="5" VerticalAlignment="Stretch" HorizontalAlignment="Center"/>
-                <Grid Grid.Column="2">
+                <GridSplitter Grid.Column="3" Width="5" VerticalAlignment="Stretch" HorizontalAlignment="Center"/>
+                <Grid Grid.Column="4">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="*"/>
