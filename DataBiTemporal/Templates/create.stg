@@ -1,5 +1,31 @@
-﻿script(def) ::= <<
-CREATE TABLE [<def.btSchema>].[<def.name>] (
+﻿create_drop(def) ::= <<
+<create(def)>
+<drop(def)>
+>>
+
+drop(def) ::= <<
+DROP FUNCTION <funcname(def,["ValidAt","AsOf"])>
+DROP FUNCTION <funcname(def,["ValidAt"])>
+DROP FUNCTION <funcname(def,["AsOf"])>
+DROP VIEW <viewname(def)>
+DROP TABLE <tablename(def)>
+<if(def.createBtSchema)>
+DROP SCHEMA [<def.btSchema>]
+<endif>
+>>
+
+create(def) ::= <<
+<if(def.db)>
+USE [<def.db>]
+GO
+<endif>
+
+<if(def.createBtSchema)>
+CREATE SCHEMA [<def.btSchema>]
+GO
+<endif>
+
+CREATE TABLE <tablename(def)> (
 	<def.cols:{c|[<c.name>] <c.opts>};separator=",\n">,
 	[validFrom] DATETIME2(7) NULL,
 	[validTo] DATETIME2(7) NULL,
@@ -73,7 +99,7 @@ AS BEGIN
 END
 GO
 
-CREATE VIEW [<def.schema>].[<def.name>] WITH SCHEMABINDING AS
+CREATE VIEW <viewname(def)> WITH SCHEMABINDING AS
 SELECT
 	<selectlist([def.cols:{c|[<c.name>]}, "[validFrom]", "[validTo]"])>
 FROM
@@ -101,13 +127,13 @@ AS BEGIN
 
 	INSERT [<def.btSchema>].[<def.name>] (<def.cols:{c|[<c.name>], }>[validFrom], [validTo], [transBegin], [transEnd])
 	SELECT
-		<selectlist([def.cols:{c|[<c.name>]}, "[validFrom]", "[validTo]", "@now", null])>
+		<selectlist([def.cols:{c|[<c.name>]}, "[validFrom]", "[validTo]", "@now", "NULL"])>
 	FROM
 		inserted
 END
 GO
 
-CREATE FUNCTION [<def.schema>].[<def.name>_ValidAt_AsOf] (@valid DATETIME2, @trans DATETIME2)
+CREATE FUNCTION <funcname(def,["ValidAt","AsOf"])> (@valid DATETIME2, @trans DATETIME2)
 RETURNS TABLE
 AS RETURN (
 	SELECT
@@ -122,7 +148,7 @@ AS RETURN (
 )
 GO
 
-CREATE FUNCTION [<def.schema>].[<def.name>_ValidAt] (@valid DATETIME2)
+CREATE FUNCTION <funcname(def,["ValidAt"])> (@valid DATETIME2)
 RETURNS TABLE
 AS RETURN (
 	SELECT
@@ -138,7 +164,7 @@ AS RETURN (
 )
 GO
 
-CREATE FUNCTION [<def.schema>].[<def.name>_AsOf] (@trans DATETIME2)
+CREATE FUNCTION <funcname(def,["AsOf"])> (@trans DATETIME2)
 RETURNS TABLE
 AS RETURN (
 	SELECT
@@ -174,4 +200,16 @@ ISNULL(<if(tab)>[<tab>].<endif>[<col>], CONVERT(DATETIME2, '0001-01-01 00:00:00.
 
 upper(tab,col) ::= <<
 ISNULL(<if(tab)>[<tab>].<endif>[<col>], CONVERT(DATETIME2, '9999-12-31 23:59:59.9999999'))
+>>
+
+tablename(def) ::= <<
+<if(def.db)>[<def.db>].<endif>[<def.btSchema>].[<def.name>]
+>>
+
+viewname(def) ::= <<
+[<def.schema>].[<def.name>]
+>>
+
+funcname(def,types) ::= <<
+[<def.schema>].[<[def.name,types];separator="_">]
 >>

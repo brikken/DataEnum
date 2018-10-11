@@ -1,5 +1,7 @@
 {
   "def": {
+    "createBtSchema": true,
+    "db": "STAC_Performance",
     "name": "MyBiTempTable",
     "schema": "dbo",
     "btSchema": "bitemp",
@@ -12,10 +14,10 @@
         "name": "myNum",
         "opts": "DECIMAL(18,2)"
       },
-      {
-        "name": "myText",
-        "opts": "VARCHAR(200)"
-      }
+        {
+            "name": "myText",
+            "opts": "VARCHAR(200)"
+        }
     ],
     "primcols": [
       "id"
