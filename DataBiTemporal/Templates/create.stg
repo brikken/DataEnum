@@ -57,9 +57,9 @@ AS BEGIN
 		<lower(null,"transBegin")> = <upper(null,"transEnd")>
 
 	-- Optimization ideas
-	--   SELECT TOP 1 [...] to stop as soon as an error is found
 	--   The overlaps are symmetric - can that be utilized?
 	--   Pre-optimize index and execution strategy (hints)
+	--   Interval query optimization
 	DECLARE @entries BIGINT, @overlaps BIGINT
 	SELECT
 		@entries = COUNT_BIG(*)
