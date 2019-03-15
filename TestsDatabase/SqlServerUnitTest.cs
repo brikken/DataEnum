@@ -9,7 +9,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace TestsDatabase
 {
-    [TestClass()]
+    // [TestClass()]
     public class SqlServerUnitTest : SqlDatabaseTestClass
     {
 

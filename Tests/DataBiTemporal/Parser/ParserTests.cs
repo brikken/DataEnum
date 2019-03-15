@@ -19,7 +19,7 @@ namespace Tests.DataBiTemporal.Parser
         public void WalkTest()
         {
             var code = File.ReadAllText(@"DataBiTemporal\Parser\simple.sql");
-            Assert.AreEqual(21, ParserHelpers.WalkTree(code));
+            Assert.AreEqual(31, ParserHelpers.WalkTree(code));
         }
     }
 }
