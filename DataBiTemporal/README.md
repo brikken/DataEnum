@@ -1,5 +1,12 @@
 ﻿# DataBiTemporal
 
+## Project
+
+### Useful extensions
+* ANTLR Language Support
+* StringTemplate 4 Language Support
+* Markdown Editor
+
 ## Approaches
 
 ### Define everything
@@ -21,6 +28,7 @@ CREATE TABLE [dbo].[MyBiTempTable] (
 )
 DTWITH (BITEMPORAL (BTSCHEMA = [bitemp]))
 ```
+`DTWITH` is inspired by the T-SQL syntax `WITH` where `DT` is short for Data Temporality
 
 ### Define add-on
 Tables are assumed to exist. Only a bi-temporal add-on is defined.

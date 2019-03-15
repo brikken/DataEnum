@@ -47,7 +47,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Class1.cs" />
     <Compile Include="Parser\BiTempDef.g4.lexer.cs">
       <DependentUpon>BiTempDef.g4</DependentUpon>
     </Compile>
@@ -71,7 +70,9 @@
     <None Include="Templates\create.json" />
     <None Include="Templates\create.stg" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Content Include="SQL\hierarchyid_interval_test.sql" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
