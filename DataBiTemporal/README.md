@@ -7,6 +7,9 @@
 * StringTemplate 4 Language Support
 * Markdown Editor
 
+## ToDo
+In the BiTemporal Definition class, the approach with collections for options is not good. It's a hassle to extract the options with class casting. Change and finish the basic translator test.
+
 ## Approaches
 
 ### Define everything
@@ -39,3 +42,12 @@ Pros
 Cons
 - less control
 - makes pre-validations harder
+
+## Things to consider
+
+### Primary key
+The bi-temporal update trigger relies heavily on a primary key. This is used both to update the transaction table, but also to check for overlapping validity intervals. Are there any requirements to the primary key that must be fulfilled for this to work? Primary keys can also be defined both inline or as a constraint "on top".
+
+### Performance
+Data is only stored once in the bi-temporal table. When retrieving the current state, all rows with `transEnd IS NULL` is retrieved. Consider allowing specifiying performance improvements by storing current data in a 
+more accessible way.
