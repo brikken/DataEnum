@@ -54,6 +54,10 @@
   <ItemGroup>
     <Compile Include="DataBiTemporal\Parser\LexerTests.cs" />
     <Compile Include="DataBiTemporal\Parser\ParserTests.cs" />
+    <Content Include="DataBiTemporal\Translator\basic.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Compile Include="DataBiTemporal\Translator\Tests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="WindowsApp\ItemViewModelTests.cs" />
     <Compile Include="WindowsApp\ReflectionTests.cs" />
