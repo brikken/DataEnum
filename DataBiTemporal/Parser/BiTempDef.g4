@@ -17,9 +17,9 @@ colDef
 	;
 
 colType
-	:	T_INT
-	|	T_VARCHAR
-	|	T_DECIMAL
+	:	T_INT			#colTypeInt
+	|	T_VARCHAR		#colTypeVarchar
+	|	T_DECIMAL		#colTypeDecimal
 	;
 
 colOpt
@@ -29,15 +29,15 @@ colOpt
 	;
 
 tabOpt
-	:	DTWITH '(' opts+=dtwithOpt (',' opts+=dtwithOpt)* ')'
+	:	DTWITH '(' opts+=dtwithOpt (',' opts+=dtwithOpt)* ')'		#tabOptDtWith
 	;
 
 dtwithOpt
-	:	BITEMPORAL ('(' opts+=btOpt (',' opts+=btOpt)* ')')?
+	:	BITEMPORAL ('(' opts+=btOpt (',' opts+=btOpt)* ')')?		#dtWithOptBiTemporal
 	;
 
 btOpt
-	:	BTSCHEMA '=' sch=OBJ_ID
+	:	BTSCHEMA '=' sch=OBJ_ID		#btOptBtSchema
 	;
 
 /*

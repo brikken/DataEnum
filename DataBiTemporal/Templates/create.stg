@@ -21,7 +21,7 @@ GO
 <endif>
 
 <if(def.createBtSchema)>
-CREATE SCHEMA [<def.btSchema>]
+IF EXISTS (SELECT 1 WHERE SCHEMA_ID('<def.btSchema>') IS NOT NULL) CREATE SCHEMA [<def.btSchema>]
 GO
 <endif>
 

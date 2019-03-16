@@ -47,6 +47,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Definitions\BiTemporal.cs" />
+    <Compile Include="Definitions\Shared.cs" />
     <Compile Include="Parser\BiTempDef.g4.lexer.cs">
       <DependentUpon>BiTempDef.g4</DependentUpon>
     </Compile>
@@ -56,6 +58,7 @@
     <Compile Include="Parser\LexerHelpers.cs" />
     <Compile Include="Parser\ParserHelpers.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Translators\BiTemporal.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
