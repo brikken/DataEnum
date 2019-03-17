@@ -39,5 +39,10 @@ namespace DataBiTemporal.Parser
                 Counter++;
             }
         }
+
+        public static string GetRaw(string input, ParserRuleContext context)
+        {
+            return input.Substring(context.Start.StartIndex, context.Stop.StopIndex - context.Start.StartIndex + 1);
+        }
     }
 }

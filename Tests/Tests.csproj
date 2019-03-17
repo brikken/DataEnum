@@ -52,12 +52,15 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConsoleApps\BiTemporal\Tests.cs" />
     <Compile Include="DataBiTemporal\Parser\LexerTests.cs" />
     <Compile Include="DataBiTemporal\Parser\ParserTests.cs" />
-    <Content Include="DataBiTemporal\Translator\basic.sql">
+    <None Include="DataBiTemporal\Translator\basic.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    </None>
+    <Compile Include="DataBiTemporal\Render\Tests.cs" />
     <Compile Include="DataBiTemporal\Translator\Tests.cs" />
+    <Compile Include="DataBiTemporal\Translator\Shared.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="WindowsApp\ItemViewModelTests.cs" />
     <Compile Include="WindowsApp\ReflectionTests.cs" />
@@ -71,6 +74,14 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\BiTemporal\BiTemporal.csproj">
+      <Project>{bcbda3dd-e146-4359-b858-9ce746a106a1}</Project>
+      <Name>BiTemporal</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ConsoleApp\DataEnum.csproj">
+      <Project>{63481555-d477-4678-9fc7-841e25b817a3}</Project>
+      <Name>DataEnum</Name>
+    </ProjectReference>
     <ProjectReference Include="..\DataBiTemporal\DataBiTemporal.csproj">
       <Project>{f48be988-5716-4636-8fad-84f426fd2c0b}</Project>
       <Name>DataBiTemporal</Name>

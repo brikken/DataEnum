@@ -9,11 +9,16 @@ compileUnit
 	;
 
 tableDef
-	:	CREATE TABLE (db=OBJ_ID '.' sch=OBJ_ID '.' | sch=OBJ_ID '.')? tab=OBJ_ID '(' cols+=colDef (',' cols+=colDef)* ')' opts+=tabOpt* ';'?
+	:	CREATE TABLE multiPartId? tab=OBJ_ID '(' cols+=colDef (',' cols+=colDef)* ')' opts+=tabOpt* ';'?
+	;
+
+multiPartId
+	:	db=OBJ_ID '.' sch=OBJ_ID '.'	#multiPartIdDbSch
+	|	sch=OBJ_ID '.'					#multiPartIdSch
 	;
 
 colDef
-	:	col=OBJ_ID type=colType opts+=colOpt*
+	:	col=OBJ_ID type=colType opts=colOpt*
 	;
 
 colType

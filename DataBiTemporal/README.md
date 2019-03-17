@@ -8,7 +8,7 @@
 * Markdown Editor
 
 ## ToDo
-In the BiTemporal Definition class, the approach with collections for options is not good. It's a hassle to extract the options with class casting. Change and finish the basic translator test.
+Fix the `null` issue in the template.
 
 ## Approaches
 

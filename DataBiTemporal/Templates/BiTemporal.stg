@@ -1,0 +1,214 @@
+﻿create_drop(def) ::= <<
+<create(def)>
+<drop(def)>
+>>
+
+drop(def) ::= <<
+DROP FUNCTION <funcname(def,["ValidAt","AsOf"])>
+DROP FUNCTION <funcname(def,["ValidAt"])>
+DROP FUNCTION <funcname(def,["AsOf"])>
+DROP VIEW <viewname(def)>
+DROP TABLE <tablename(def)>
+>>
+
+create(def) ::= <<
+<if(def.Database)>
+USE [<def.Database>]
+GO
+<endif>
+
+IF EXISTS (SELECT 1 WHERE SCHEMA_ID('<def.BtSchema>') IS NOT NULL) CREATE SCHEMA [<def.BtSchema>]
+GO
+
+CREATE TABLE <tablename(def)> (
+	<def.Columns:{c|[<c.Id>] <c.Options.Raw>};separator=",\n">,
+	[validFrom] DATETIME2(7) NULL,
+	[validTo] DATETIME2(7) NULL,
+	[transBegin] DATETIME2(7) NOT NULL,
+	[transEnd] DATETIME2(7) NULL
+)
+GO
+
+CREATE TRIGGER [<def.BtSchema>].[<def.Table>_DELETE] ON [<def.BtSchema>].[<def.Table>]
+INSTEAD OF DELETE
+AS BEGIN
+	-- Deletes are never allowed in the transaction log
+	ROLLBACK;
+	THROW 50000, 'Deletes are not allowed from a bitemporal table', 0;
+END
+GO
+
+CREATE TRIGGER [<def.BtSchema>].[<def.Table>_DML] ON [<def.BtSchema>].[<def.Table>]
+AFTER INSERT, UPDATE
+AS BEGIN
+	IF (ROWCOUNT_BIG() = 0) RETURN; -- https://docs.microsoft.com/en-us/sql/t-sql/statements/create-trigger-transact-sql
+
+	-- Since
+	--   start \<= T \< end
+	-- these rows will never have any significance
+	DELETE [<def.BtSchema>].[<def.Table>] WHERE
+		<lower(null,"validFrom")> = <upper(null,"validTo")>
+		OR
+		<lower(null,"transBegin")> = <upper(null,"transEnd")>
+
+	-- Optimization ideas
+	--   The overlaps are symmetric - can that be utilized?
+	--   Pre-optimize index and execution strategy (hints)
+	--   Interval query optimization
+	DECLARE @entries BIGINT, @overlaps BIGINT
+	SELECT
+		@entries = COUNT_BIG(*)
+	FROM
+		(SELECT DISTINCT <primcols(def)> FROM inserted) i
+		INNER JOIN [<def.BtSchema>].[<def.Table>] t1 ON 1=1
+			<primjoin(def,"t1","i")>
+
+	SELECT
+		@overlaps = COUNT_BIG(*)
+	FROM
+		(SELECT DISTINCT <primcols(def)> FROM inserted) i
+		INNER JOIN [<def.BtSchema>].[<def.Table>] t1 ON 1=1
+			<primjoin(def,"t1","i")>
+		INNER JOIN [<def.BtSchema>].[<def.Table>] t2 ON 1=1
+			<primjoin(def,"t2","t1")>
+			AND (
+				 -- 3, 4, 5, 6, 7, 8
+				(<lower("t2","transBegin")> \<= <lower("t1","transBegin")> AND
+				 <upper("t2","transEnd")> > <lower("t1","transBegin")>)
+				OR
+				 -- 9, 10, 11
+				(<lower("t2","transBegin")> > <lower("t1","transBegin")> AND
+				 <lower("t2","transBegin")> \< <upper("t1","transEnd")>)
+			) AND (
+				(<lower("t2","validFrom")> \<= <lower("t1","validFrom")> AND
+				 <upper("t2","validTo")> > <upper("t1","validFrom")>)
+				OR
+				(<lower("t2","validFrom")> > <lower("t1","validFrom")> AND
+				 <lower("t2","validFrom")> \< <upper("t1","validTo")>)
+			)
+
+	IF @overlaps > @entries BEGIN
+		ROLLBACK;
+		THROW 50000, N'Overlapping intervals', 0;
+	END
+END
+GO
+
+CREATE VIEW <viewname(def)> WITH SCHEMABINDING AS
+SELECT
+	<selectlist([def.Columns:{c|[<c.Id>]}, "[validFrom]", "[validTo]"])>
+FROM
+	[<def.BtSchema>].[<def.Table>]
+WHERE
+	[transEnd] IS NULL
+GO
+
+CREATE TRIGGER [<def.schema>].[<def.Table>_DML] ON [<def.schema>].[<def.Table>]
+INSTEAD OF INSERT, UPDATE, DELETE
+AS BEGIN
+	IF (ROWCOUNT_BIG() = 0) RETURN; -- https://docs.microsoft.com/en-us/sql/t-sql/statements/create-trigger-transact-sql
+
+	DECLARE @now DATETIME2(7) = SYSDATETIME();
+
+	UPDATE t
+	SET transEnd = @now
+	FROM
+		deleted d
+		INNER JOIN [<def.BtSchema>].[<def.Table>] t ON 1=1
+			AND t.[transEnd] IS NULL
+			AND t.[validFrom] = d.[validFrom]
+			AND t.[validTo] = d.[validTo]
+			<primjoin(def, "t", "d")>
+
+	INSERT [<def.BtSchema>].[<def.Table>] (<def.Columns:{c|[<c.Id>], }>[validFrom], [validTo], [transBegin], [transEnd])
+	SELECT
+		<selectlist([def.Columns:{c|[<c.Id>]}, "[validFrom]", "[validTo]", "@now", "NULL"])>
+	FROM
+		inserted
+END
+GO
+
+CREATE FUNCTION <funcname(def,["ValidAt","AsOf"])> (@valid DATETIME2, @trans DATETIME2)
+RETURNS TABLE
+AS RETURN (
+	SELECT
+		<selectlist([def.Columns:{c|[<c.Id>]}, "@valid [validAt]", "@trans [asOf]"])>
+	FROM
+		[<def.BtSchema>].[<def.Table>]
+	WHERE
+		<lower(null,"transBegin")> \<= @trans AND
+		<upper(null,"transEnd")> >  @trans AND
+		<lower(null,"validFrom")> \<= @valid AND
+		<upper(null,"validTo")> >  @valid
+)
+GO
+
+CREATE FUNCTION <funcname(def,["ValidAt"])> (@valid DATETIME2)
+RETURNS TABLE
+AS RETURN (
+	SELECT
+		<selectlist([def.Columns:{c|[<c.Id>]}])>
+		,@valid validAt
+		,<lower(null,"transBegin")> transBegin
+		,<upper(null,"transEnd")> transEnd
+	FROM
+		[<def.BtSchema>].[<def.Table>]
+	WHERE
+		<lower(null,"validFrom")> \<= @valid AND
+		<upper(null,"validTo")> >  @valid
+)
+GO
+
+CREATE FUNCTION <funcname(def,["AsOf"])> (@trans DATETIME2)
+RETURNS TABLE
+AS RETURN (
+	SELECT
+		<selectlist([def.Columns:{c|[<c.Id>]}])>
+		,@trans asOf
+		,<lower(null,"validFrom")> validFrom
+		,<upper(null,"validTo")> validTo
+	FROM
+		[<def.BtSchema>].[<def.Table>]
+	WHERE
+		<lower(null,"transBegin")> \<= @trans AND
+		<upper(null,"transEnd")> >  @trans
+)
+GO
+>>
+
+primcols(def) ::= <<
+<def.primcols:{c|[<c>]};separator=", ">
+>>
+
+primjoin(def,t1,t2) ::= <<
+<def.primcols:{c|AND [<t1>].[<c>] = [<t2>].[<c>]};separator=" ">
+>>
+
+selectlist(cols) ::= <<
+ <first(cols)>
+<rest(cols):{c|,<c>};separator="\n">
+>>
+
+lower(tab,col) ::= <<
+ISNULL(<if(tab)>[<tab>].<endif>[<col>], CONVERT(DATETIME2, '0001-01-01 00:00:00.0000000'))
+>>
+
+upper(tab,col) ::= <<
+ISNULL(<if(tab)>[<tab>].<endif>[<col>], CONVERT(DATETIME2, '9999-12-31 23:59:59.9999999'))
+>>
+
+tablename(def) ::= <<
+<if(def.Database)>[<def.Database>].<endif>[<def.BtSchema>].[<def.Table>]
+>>
+
+viewname(def) ::= <<
+[<def.schema>].[<def.Table>]
+>>
+
+funcname(def,types) ::= <<
+[<def.schema>].[<[def.Table,types];separator="_">]
+>>
+
+test(def) ::= <<
+test
+>>

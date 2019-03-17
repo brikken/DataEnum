@@ -8,48 +8,81 @@ using def = DataBiTemporal.Definitions;
 using DataBiTemporal.Parser;
 using Antlr4.Runtime.Misc;
 using Antlr4.Runtime.Tree;
+using Antlr4.Runtime;
 
 namespace DataBiTemporal.Translators
 {
     public class BiTemporal
     {
-        public static ICollection<def.BiTemporal> GetDefinitions(string input)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        /// <exception cref="ParseErrorException">Thrown at lexing and parsing errors</exception>
+        public static IList<def.BiTemporal> GetDefinitions(string input)
         {
-            var ais = new Antlr4.Runtime.AntlrInputStream(input);
+            var ais = new AntlrInputStream(input);
+
             var lexer = new BiTempDefLexer(ais);
-            var cts = new Antlr4.Runtime.CommonTokenStream(lexer);
+            lexer.RemoveErrorListeners();
+            lexer.AddErrorListener(new BiTemporalErrorListener<int>());
+
+            var cts = new CommonTokenStream(lexer);
+
             var parser = new BiTempDefParser(cts);
+            parser.RemoveErrorListeners();
+            parser.AddErrorListener(new BiTemporalErrorListener<IToken>());
+
             var root = parser.compileUnit();
 
-            var listener = new BiTemporalListener();
+            var listener = new BiTemporalListener(input);
             var ptw = new ParseTreeWalker();
             ptw.Walk(listener, root);
+
+            foreach (var definition in listener.Definitions)
+            {
+                foreach (var col in definition.Columns)
+                {
+                    if (col.Options.Content.Count(opt => opt == def.ColumnOption.PRIMARY_KEY) > 0)
+                    {
+                        definition.PrimaryKey.Add(col);
+                    }
+                }
+            }
 
             return listener.Definitions;
         }
     }
 
+    public class ParseErrorException : Exception
+    {
+        public ParseErrorException(string message) : base(message) { }
+    }
+
+    class BiTemporalErrorListener<T> : IAntlrErrorListener<T>
+    {
+        public void SyntaxError([NotNull] IRecognizer recognizer, [Nullable] T offendingSymbol, int line, int charPositionInLine, [NotNull] string msg, [Nullable] RecognitionException e)
+        {
+            throw new ParseErrorException($"Line {line}:{charPositionInLine} {msg}");
+        }
+    }
+
     class BiTemporalListener : BiTempDefBaseListener
     {
-        public ICollection<def.BiTemporal> Definitions { get; set; } = new Collection<def.BiTemporal>();
+        public IList<def.BiTemporal> Definitions { get; set; } = new List<def.BiTemporal>();
         def.BiTemporal curDef;
         def.Column curCol;
-        def.ITableOption curTabOpt;
-        def.IDtWithOption curDtWithOpt;
+        string input;
+
+        public BiTemporalListener(string input)
+        {
+            this.input = input;
+        }
 
         public override void EnterBtOptBtSchema([NotNull] BiTempDefParser.BtOptBtSchemaContext context)
         {
-            (curDtWithOpt as def.BiTemporalOption).BtSchema.Raw = context.sch.Text;
-        }
-
-        public override void EnterDtWithOptBiTemporal([NotNull] BiTempDefParser.DtWithOptBiTemporalContext context)
-        {
-            curDtWithOpt = new def.BiTemporalOption();
-        }
-
-        public override void EnterTabOptDtWith([NotNull] BiTempDefParser.TabOptDtWithContext context)
-        {
-            curTabOpt = new def.DtWithOption();
+            curDef.BtSchema = def.ObjectId.FromDef(context.sch.Text);
         }
 
         public override void ExitColDef([NotNull] BiTempDefParser.ColDefContext context)
@@ -60,46 +93,19 @@ namespace DataBiTemporal.Translators
         public override void EnterColDef([NotNull] BiTempDefParser.ColDefContext context)
         {
             curCol = new def.Column();
-            curCol.Name.Raw = context.col.Text;
-            curCol.Options = context._opts.Select(o => Option(o)) as ICollection<def.ColumnOption>;
+            (curCol.Id = new def.ObjectId()).Raw = context.col.Text;
+            curCol.Options.Raw = ParserHelpers.GetRaw(input, context.opts);
         }
 
-        private def.ColumnOption Option(BiTempDefParser.ColOptContext context)
+        public override void EnterColType([NotNull] BiTempDefParser.ColTypeContext context)
         {
-            switch (context)
-            {
-                case BiTempDefParser.ColOptNotNullContext _:
-                    return def.ColumnOption.NOT_NULL;
-                case BiTempDefParser.ColOptNullContext _:
-                    return def.ColumnOption.NULL;
-                case BiTempDefParser.ColOptPrimaryKeyContext _:
-                    return def.ColumnOption.PRIMARY_KEY;
-                default:
-                    throw new ArgumentException($"Column option {context.GetText()} not recognized");
-            }
-        }
-
-        public override void EnterColTypeDecimal([NotNull] BiTempDefParser.ColTypeDecimalContext context)
-        {
-            curCol.Type = def.Type.DECIMAL;
-        }
-
-        public override void EnterColTypeInt([NotNull] BiTempDefParser.ColTypeIntContext context)
-        {
-            curCol.Type = def.Type.INT;
-        }
-
-        public override void EnterColTypeVarchar([NotNull] BiTempDefParser.ColTypeVarcharContext context)
-        {
-            curCol.Type = def.Type.VARCHAR;
+            curCol.Type = context.GetText();
         }
 
         public override void EnterTableDef([NotNull] BiTempDefParser.TableDefContext context)
         {
             curDef = new def.BiTemporal();
-            curDef.Database.Raw = context.db.Text;
-            curDef.Schema.Raw = context.sch.Text;
-            curDef.Table.Raw = context.tab.Text;
+            (curDef.Table = new def.ObjectId()).Raw = context.tab.Text;
         }
 
         public override void ExitTableDef([NotNull] BiTempDefParser.TableDefContext context)
@@ -107,14 +113,30 @@ namespace DataBiTemporal.Translators
             Definitions.Add(curDef);
         }
 
-        public override void ExitDtWithOptBiTemporal([NotNull] BiTempDefParser.DtWithOptBiTemporalContext context)
+        public override void EnterMultiPartIdSch([NotNull] BiTempDefParser.MultiPartIdSchContext context)
         {
-            (curTabOpt as def.DtWithOption).Options.Add(curDtWithOpt);
+            (curDef.Schema = new def.ObjectId()).Raw = context.sch.Text;
         }
 
-        public override void ExitTabOptDtWith([NotNull] BiTempDefParser.TabOptDtWithContext context)
+        public override void EnterMultiPartIdDbSch([NotNull] BiTempDefParser.MultiPartIdDbSchContext context)
         {
-            curDef.Options.Add(curTabOpt);
+            (curDef.Database = new def.ObjectId()).Raw = context.db.Text;
+            (curDef.Schema = new def.ObjectId()).Raw = context.sch.Text;
+        }
+
+        public override void EnterColOptPrimaryKey([NotNull] BiTempDefParser.ColOptPrimaryKeyContext context)
+        {
+            curCol.Options.Content.Add(def.ColumnOption.PRIMARY_KEY);
+        }
+
+        public override void EnterColOptNull([NotNull] BiTempDefParser.ColOptNullContext context)
+        {
+            curCol.Options.Content.Add(def.ColumnOption.NULL);
+        }
+
+        public override void EnterColOptNotNull([NotNull] BiTempDefParser.ColOptNotNullContext context)
+        {
+            curCol.Options.Content.Add(def.ColumnOption.NOT_NULL);
         }
     }
 }
