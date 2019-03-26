@@ -32,6 +32,7 @@ Foundation: Roll forward state and schema the way it originally happened
     * Other members
       * Schema
       * Table
+* Cascading filters (include and exclude)
 * Manual overrides
   * Excludes based on filter
   * Manual entry at qualified location in processing order
