@@ -1,6 +1,17 @@
 # Automatic data update
-Foundation: Roll forward state and schema the way it originally happened
+* Schema analysis
+  * Iterate databases
+    * Iterate tables
+      * Properties
+        * Has identity
+        * In indexed view (see snippet)
+      * Indexes
+      * Triggers
+      * Columns
+      * Foreign key references
+      * Walk and group foreign key references
 * Optimization opportunities
+  * Foundation: Roll forward state and schema the way it originally happened
   * Islands (MERGE), ie. no
     * Identity columns
     * Foreign keys (outgoing)
@@ -11,7 +22,7 @@ Foundation: Roll forward state and schema the way it originally happened
     * Disable triggers
     * Foreign keys
       * Self-referencing: By row, initialize with fk=id or fk is null
-      * Else load base tables first (ordered DELETE and INSERT)
+      * Else: Load base tables first (ordered DELETE and INSERT)
     * Disable indexes on views
 * Actions
   * Allow custom listener modules to modify actions descriptors
@@ -37,9 +48,4 @@ Foundation: Roll forward state and schema the way it originally happened
   * Manual entry at qualified location in processing order
 * Error handling
   * Limit to dependent context (foreign key hierarchy)
-* Schema analysis
-  * Iterate databases
-    * Iterate tables
-      * Create and save properties (identity, indexed view, trigger)
-      * Set foreign key references
-      * Walk and group foreign key references
+  * Schema analysis traversal

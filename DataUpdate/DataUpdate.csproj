@@ -47,5 +47,10 @@
   <ItemGroup>
     <None Include="readme.md" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="SQL snippets\Tables.sql" />
+    <Content Include="SQL snippets\Databases.sql" />
+    <Content Include="SQL snippets\Tables in indexed views.sql" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
