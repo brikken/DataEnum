@@ -5,7 +5,6 @@
       * Properties
         * Has identity
         * In indexed view (see snippet)
-      * Indexes
       * Triggers
       * Columns
       * Foreign key references
@@ -35,17 +34,19 @@
             * Else
                 * &lt; 5x mb: everything
                 * Else: manual filter
-* Processing order
-  * Database
-    * Foreign key hierarchies (stable hash)
-      * Schema
-      * Table
-    * Other members
-      * Schema
-      * Table
-* Manual overrides
-  * Excludes based on filter
+  * Processing order
+    * Database
+      * Foreign key hierarchies (stable hash)
+        * Schema
+        * Table
+      * Other members
+        * Schema
+        * Table
   * Manual entry at qualified location in processing order
+* Filtering
+  * Schema analysis
+  * Action generation
+    * Alert if dependencies are exluded
 * Error handling
   * Limit to dependent context (foreign key hierarchy)
   * Schema analysis traversal

@@ -48,6 +48,10 @@
     <None Include="readme.md" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="SQL snippets\Foreign keys.sql" />
+    <Content Include="SQL snippets\Columns.sql" />
+    <Content Include="SQL snippets\Triggers.sql" />
+    <Content Include="SQL snippets\Indexes.sql" />
     <Content Include="SQL snippets\Tables.sql" />
     <Content Include="SQL snippets\Databases.sql" />
     <Content Include="SQL snippets\Tables in indexed views.sql" />
