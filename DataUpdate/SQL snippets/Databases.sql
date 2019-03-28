@@ -1,6 +1,5 @@
 ﻿SELECT
-	 [name]
-	,[database_id]
+	[database_name]
 FROM
 	[master].[sys].[databases]
 WHERE

@@ -1,7 +1,7 @@
 ﻿select 
-	OBJECT_SCHEMA_NAME(sed.referenced_id) as [table_schema],
+	OBJECT_SCHEMA_NAME(sed.referenced_id) as [table_schema_name],
 	OBJECT_NAME(sed.referenced_id) as [table_name],
-    OBJECT_SCHEMA_NAME(i.object_id) as [view_schema],
+    OBJECT_SCHEMA_NAME(i.object_id) as [view_schema_name],
     OBJECT_NAME(i.object_id) as [view_name],
 	i.[name] [index_name]
 from

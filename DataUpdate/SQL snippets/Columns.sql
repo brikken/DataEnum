@@ -1,9 +1,9 @@
 ﻿SELECT
 	 OBJECT_SCHEMA_NAME(c.[OBJECT_ID]) [schema_name]
 	,OBJECT_NAME(c.[object_id]) [table_name]
-	,c.[name]
+	,c.[name] [column_name]
 	,c.[column_id]
-	,t.is_assembly_type
+	,t.[is_assembly_type]
 FROM
 	[Misc].[sys].[columns] c
 	INNER JOIN [Misc].[sys].[objects] o ON

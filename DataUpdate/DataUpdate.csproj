@@ -46,6 +46,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="readme.md" />
+    <None Include="structure.md" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="SQL snippets\Foreign keys.sql" />
@@ -55,6 +56,9 @@
     <Content Include="SQL snippets\Tables.sql" />
     <Content Include="SQL snippets\Databases.sql" />
     <Content Include="SQL snippets\Tables in indexed views.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="SchemaAnalysis\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

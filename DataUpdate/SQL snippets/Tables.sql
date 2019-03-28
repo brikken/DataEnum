@@ -1,6 +1,6 @@
 ﻿SELECT
-	 OBJECT_SCHEMA_NAME(t.[object_id]) [schema]
-	,t.[name]
+	 OBJECT_SCHEMA_NAME(t.[object_id]) [schema_name]
+	,t.[table_name]
 	,COALESCE(c.is_identity, 0) [has_identity]
 FROM
 	[Misc].[sys].[tables] t
