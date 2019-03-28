@@ -44,9 +44,12 @@
         * Table
   * Manual entry at qualified location in processing order
 * Filtering
-  * Schema analysis
-  * Action generation
-    * Alert if dependencies are exluded
+  * Areas
+    * Schema analysis
+    * Action generation
+      * Alert if dependencies are exluded
+  * Method
+    * 
 * Error handling
   * Limit to dependent context (foreign key hierarchy)
   * Schema analysis traversal

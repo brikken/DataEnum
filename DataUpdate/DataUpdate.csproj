@@ -43,6 +43,9 @@
   <ItemGroup>
     <Compile Include="Class1.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Schema\Analysis\Analyzer.cs" />
+    <Compile Include="Schema\Analysis\Configuration.cs" />
+    <Compile Include="Schema\Description.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="readme.md" />
@@ -58,7 +61,7 @@
     <Content Include="SQL snippets\Tables in indexed views.sql" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="SchemaAnalysis\" />
+    <Folder Include="Grammars\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
