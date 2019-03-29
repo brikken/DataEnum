@@ -1,4 +1,7 @@
 # Automatic data update
+## Todo
+Fix grammar - doesn't produce visitor
+## Plan
 * Schema analysis
   * Iterate databases
     * Iterate tables

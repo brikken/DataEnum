@@ -18,7 +18,7 @@ namespace DataUpdate.Schema.Analysis
             };
             var connection = new System.Data.SqlClient.SqlConnection(connectionStringBuilder.ConnectionString);
 
-
+            throw new NotImplementedException();
         }
     }
 }

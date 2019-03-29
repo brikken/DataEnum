@@ -42,6 +42,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Class1.cs" />
+    <Compile Include="Grammars\Configuration.g4.lexer.cs">
+      <DependentUpon>Configuration.g4</DependentUpon>
+    </Compile>
+    <Compile Include="Grammars\Configuration.g4.parser.cs">
+      <DependentUpon>Configuration.g4</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Schema\Analysis\Analyzer.cs" />
     <Compile Include="Schema\Analysis\Configuration.cs" />
@@ -60,8 +66,13 @@
     <Content Include="SQL snippets\Databases.sql" />
     <Content Include="SQL snippets\Tables in indexed views.sql" />
   </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
-    <Folder Include="Grammars\" />
+    <Antlr4 Include="Grammars\Configuration.g4">
+      <Generator>MSBuild:Compile</Generator>
+      <CustomToolNamespace>DataUpdate.Grammars</CustomToolNamespace>
+      <Visitor>True</Visitor>
+    </Antlr4>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
