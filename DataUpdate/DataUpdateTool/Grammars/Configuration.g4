@@ -10,8 +10,8 @@ filter
     ;
 
 partFilter
-    : WILDCARD  #partFilterWildcard
-    | id        #partFilterId
+    : WILDCARD #partFilterWildcard
+    | id #partFilterId
     ;
 
 id

@@ -7,8 +7,8 @@
     <ProjectGuid>{71E600A0-1697-4D3A-813B-709ABD3DF6F0}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>DataUpdate</RootNamespace>
-    <AssemblyName>DataUpdate</AssemblyName>
+    <RootNamespace>DataUpdateTool</RootNamespace>
+    <AssemblyName>DataUpdateTool</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
@@ -54,6 +54,13 @@
     <Compile Include="Schema\Description.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Antlr4 Include="Grammars\Configuration.g4">
+      <Generator>MSBuild:Compile</Generator>
+      <CustomToolNamespace>DataUpdateTool.Grammars</CustomToolNamespace>
+      <Listener>True</Listener>
+      <Visitor>True</Visitor>
+      <TargetLanguage>CSharp</TargetLanguage>
+    </Antlr4>
     <None Include="readme.md" />
     <None Include="structure.md" />
   </ItemGroup>
@@ -67,12 +74,5 @@
     <Content Include="SQL snippets\Tables in indexed views.sql" />
   </ItemGroup>
   <ItemGroup />
-  <ItemGroup>
-    <Antlr4 Include="Grammars\Configuration.g4">
-      <Generator>MSBuild:Compile</Generator>
-      <CustomToolNamespace>DataUpdate.Grammars</CustomToolNamespace>
-      <Visitor>True</Visitor>
-    </Antlr4>
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
